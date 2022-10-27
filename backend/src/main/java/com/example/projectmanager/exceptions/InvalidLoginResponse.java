@@ -1,14 +1,14 @@
-package com.example.projectmanager.payload.request;
+package com.example.projectmanager.exceptions;
 
-import javax.validation.constraints.NotBlank;
-
-public class LoginRequest {
-
-    @NotBlank(message = "Username cannot be blank")
+public class InvalidLoginResponse {
     private String username;
-
-    @NotBlank(message = "Password cannot be blank")
     private String password;
+
+    public InvalidLoginResponse() {
+        this.username = "Invalid Username!";
+        this.password = "Invalid Password!";
+    }
+
 
     public String getUsername() {
         return username;
@@ -25,5 +25,6 @@ public class LoginRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
 
 }

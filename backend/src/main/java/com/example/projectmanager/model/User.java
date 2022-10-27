@@ -1,57 +1,117 @@
 package com.example.projectmanager.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(	name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
-        })
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "users")
 @Getter
 @Setter
-public class User {
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 20)
+
+    @Email(message = "Username needs to be an email")
+    @NotBlank(message = "username is required")
+    @Column(unique = true)
     private String username;
 
-    @NotBlank
-    @Size(max = 50)
-    @Email
-    private String email;
+    @NotBlank(message = "Please enter your first name")
+    private String firstName;
 
-    @NotBlank
-    @Size(max = 120)
+    @NotBlank(message = "Please enter your last name")
+    private String lastName;
+
+    @NotBlank(message = "Password field is required")
     private String password;
 
+    @Transient
+    private String confirmPassword;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
+    @JsonFormat(pattern = "yyyy-mm-dd")
+    private Date created_At;
 
+    @JsonFormat(pattern = "yyyy-mm-dd")
+    private Date updated_At;
+
+    //OneToMany with Project Relationship
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
+    private List<Project> projects = new ArrayList<>();
+
+    public User() {
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_At = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updated_At = new Date();
+    }
+
+
+    /* User Details Interface methods */
+
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
+    }
+
+
 }
