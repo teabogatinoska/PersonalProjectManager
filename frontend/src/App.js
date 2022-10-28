@@ -1,126 +1,74 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
+import React from 'react';
+import './App.css';
+import Dashboard from './components/Dashboard';
+import Header from './components/Layout/Header';
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import AddProject from './components/Project/AddProject';
+import { Provider } from 'react-redux';
+import store from './store';
+import UpdateProject from './components/Project/UpdateProject';
+import ProjectBoard from './components/BacklogBoard/ProjectBoard';
+import AddProjectTask from './components/BacklogBoard/ProjectTasks/AddProjectTask';
+import UpdateProjectTask from './components/BacklogBoard/ProjectTasks/UpdateProjectTask';
+import Landing from './components/Layout/LandingPage';
+import Register from './components/User/Register';
+import Login from './components/User/Login';
+import jwt_decode from 'jwt-decode';
+import setJWTToken from './security/setJWTToken';
+import { SET_CURRENT_USER } from './services/types';
+import { logout } from './services/SecurityService';
+import SecuredRoute from './security/secureRoute';
 
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Home from "./components/Home";
-import Profile from "./components/Profile";
-import BoardUser from "./components/BoardUser";
-//import BoardModerator from "./components/BoardModerator";
-import BoardAdmin from "./components/BoardAdmin";
+const jwtToken = localStorage.jwtToken;
 
-import { logout } from "./slices/auth";
-
-import EventBus from "./common/EventBus";
-
-const App = () => {
-  //const [showModeratorBoard, setShowModeratorBoard] = useState(false);
-  const [showAdminBoard, setShowAdminBoard] = useState(false);
-
-  const { user: currentUser } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-
-  const logOut = useCallback(() => {
-    dispatch(logout());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (currentUser) {
-      //setShowModeratorBoard(currentUser.roles.includes("ROLE_MODERATOR"));
-      setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
-    } else {
-      //setShowModeratorBoard(false);
-      setShowAdminBoard(false);
-    }
-
-    EventBus.on("logout", () => {
-      logOut();
+if (jwtToken) {
+    setJWTToken(jwtToken);
+    const decoded_jwtToken = jwt_decode(jwtToken);
+    store.dispatch({
+        type: SET_CURRENT_USER,
+        payload: decoded_jwtToken
     });
 
-    return () => {
-      EventBus.remove("logout");
-    };
-  }, [currentUser, logOut]);
+    const currentTime = Date.now() / 1000;
+    if (decoded_jwtToken.exp < currentTime) {
+        store.dispatch(logout());
+        window.location.href = "/";
+    }
+}
 
-  return (
-      <Router>
-        <div>
-          <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Link to={"/"} className="navbar-brand">
-              bezKoder
-            </Link>
-            <div className="navbar-nav mr-auto">
-              <li className="nav-item">
-                <Link to={"/home"} className="nav-link">
-                  Home
-                </Link>
-              </li>
 
-              {showAdminBoard && (
-                  <li className="nav-item">
-                    <Link to={"/admin"} className="nav-link">
-                      Admin Board
-                    </Link>
-                  </li>
-              )}
+function App() {
+    return (
+        <Provider store={store}>
+            <Router>
+                <div className="App">
+                    <Header />
 
-              {currentUser && (
-                  <li className="nav-item">
-                    <Link to={"/user"} className="nav-link">
-                      User
-                    </Link>
-                  </li>
-              )}
-            </div>
+                    {
+                        //public routes
+                    }
 
-            {currentUser ? (
-                <div className="navbar-nav ml-auto">
-                  <li className="nav-item">
-                    <Link to={"/profile"} className="nav-link">
-                      {currentUser.username}
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/login" className="nav-link" onClick={logOut}>
-                      LogOut
-                    </a>
-                  </li>
+                    <Route exact path="/" component={Landing} />
+                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/login" component={Login} />
+
+                    {
+                        //private routes
+                    }
+
+                    <Switch>
+                        <SecuredRoute exact path="/dashboard" component={Dashboard} />
+                        <SecuredRoute exact path="/addProject" component={AddProject} />
+                        <SecuredRoute exact path="/updateProject/:id" component={UpdateProject} />
+                        <SecuredRoute exact path="/projectBoard/:id" component={ProjectBoard} />
+                        <SecuredRoute exact path="/addProjectTask/:id" component={AddProjectTask} />
+                        <SecuredRoute exact path="/updateProjectTask/:backlog_id/:pt_id" component={UpdateProjectTask} />
+                    </Switch>
                 </div>
-            ) : (
-                <div className="navbar-nav ml-auto">
-                  <li className="nav-item">
-                    <Link to={"/login"} className="nav-link">
-                      Login
-                    </Link>
-                  </li>
-
-                  <li className="nav-item">
-                    <Link to={"/register"} className="nav-link">
-                      Sign Up
-                    </Link>
-                  </li>
-                </div>
-            )}
-          </nav>
-
-          <div className="container mt-3">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/user" element={<BoardUser />} />
-              <Route path="/admin" element={<BoardAdmin />} />
-            </Routes>
-          </div>
-        </div>
-      </Router>
-  );
-};
+            </Router>
+        </Provider>
+    );
+}
 
 export default App;
