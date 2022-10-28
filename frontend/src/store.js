@@ -1,15 +1,25 @@
-import { configureStore } from '@reduxjs/toolkit'
-import authReducer from "./slices/auth";
-import messageReducer from "./slices/message";
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from './reducers';
 
-const reducer = {
-    auth: authReducer,
-    message: messageReducer
+const initialState = {}
+const middleware = [thunk]
+
+let store;
+
+const ReactReduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+
+if (window.navigator.userAgent.includes("Chrome") && ReactReduxDevTools) {
+    store = createStore(rootReducer, initialState, compose(applyMiddleware(...middleware),
+        ReactReduxDevTools
+    ))
+} else {
+    store = createStore(
+        rootReducer,
+        initialState,
+        compose(applyMiddleware(...middleware))
+    );
 }
 
-const store = configureStore({
-    reducer: reducer,
-    devTools: true,
-})
 
 export default store;
