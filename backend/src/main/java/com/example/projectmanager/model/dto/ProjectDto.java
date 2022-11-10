@@ -1,24 +1,27 @@
-package com.example.projectmanager.model;
+package com.example.projectmanager.model.dto;
 
+import com.example.projectmanager.model.Backlog;
+import com.example.projectmanager.model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-@Entity
-@Getter
-@Setter
-public class Project {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProjectDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Project name is required")
@@ -48,32 +51,11 @@ public class Project {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updated_At;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
-    @JsonIgnore // It won't show this backlog (with all project tasks) object when search a project by id
+    @NotNull
     private Backlog backlog;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIgnore
-    private Set<User> users;
+    @NotNull
+    private List<Long> usersIds;
 
     private String projectLeader;
-
-
-    public Project() {
-    }
-
-
-    @PrePersist
-    protected void onCreate() {
-        this.created_At = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updated_At = new Date();
-    }
-
-
 }
-

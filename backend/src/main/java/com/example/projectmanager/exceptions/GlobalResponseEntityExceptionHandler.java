@@ -36,4 +36,22 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
         UsernameAlreadyExistsResponse exceptionResponse = new UsernameAlreadyExistsResponse(ex.getMessage());
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleTaskEndDateIsNotValidException(TaskEndDateIsNotValidException ex, WebRequest request){
+        TaskEndDateIsNotValidExceptionResponse exceptionResponse = new TaskEndDateIsNotValidExceptionResponse(ex.getMessage());
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleInvalidProjectStartDateException(InvalidProjectStartDateException ex, WebRequest request){
+        InvalidProjectStartDateExceptionResponse exceptionResponse = new InvalidProjectStartDateExceptionResponse(ex.getMessage());
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleInvalidUserPermissionsException(InvalidUserPermissionsException ex, WebRequest request){
+        InvalidUserPermissionsExceptionResponse exceptionResponse = new InvalidUserPermissionsExceptionResponse(ex.getMessage());
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }

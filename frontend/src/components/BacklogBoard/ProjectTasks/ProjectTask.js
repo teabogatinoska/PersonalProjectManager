@@ -38,7 +38,7 @@ class ProjectTask extends Component {
                 <div className="card-body bg-light">
                     <h5 className="card-title">{project_task.summary}</h5>
                     <p className="card-text text-truncate">
-                        {project_task.acceptanceCriteria}
+                        {project_task.taskDescription}
                     </p>
                     <Link to={`/updateProjectTask/${project_task.projectIdentifier}/${project_task.projectSequence}`} className="btn btn-primary">
                         View / Update Task

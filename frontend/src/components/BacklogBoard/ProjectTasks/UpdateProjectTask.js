@@ -14,7 +14,7 @@ class UpdateProjectTask extends Component {
             id: "",
             projectSequence: "",
             summary: "",
-            acceptanceCriteria: "",
+            taskDescription: "",
             status: "",
             priority: "",
             dueDate: "",
@@ -41,7 +41,7 @@ class UpdateProjectTask extends Component {
             id,
             projectSequence,
             summary,
-            acceptanceCriteria,
+            taskDescription,
             status,
             priority,
             projectIdentifier,
@@ -53,7 +53,7 @@ class UpdateProjectTask extends Component {
             id,
             projectSequence,
             summary,
-            acceptanceCriteria,
+            taskDescription,
             status,
             priority,
             projectIdentifier,
@@ -73,7 +73,7 @@ class UpdateProjectTask extends Component {
             id: this.state.id,
             projectSequence: this.state.projectSequence,
             summary: this.state.summary,
-            acceptanceCriteria: this.state.acceptanceCriteria,
+            taskDescription: this.state.taskDescription,
             status: this.state.status,
             priority: this.state.priority,
             projectIdentifier: this.state.projectIdentifier,
@@ -113,7 +113,7 @@ class UpdateProjectTask extends Component {
                                     }
                                 </div>
                                 <div className="form-group">
-                                    <textarea className="form-control form-control-lg" placeholder="Acceptance Criteria" name="acceptanceCriteria" value={this.state.acceptanceCriteria} onChange={this.onChange}></textarea>
+                                    <textarea className="form-control form-control-lg" placeholder="Task Description" name="taskDescription" value={this.state.taskDescription} onChange={this.onChange}></textarea>
                                 </div>
                                 <h6>Due Date</h6>
                                 <div className="form-group">

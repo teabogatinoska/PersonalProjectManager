@@ -23,7 +23,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint{
                          AuthenticationException authException) throws IOException, ServletException {
 
         InvalidLoginResponse loginResponse = new InvalidLoginResponse();
-        String jsonLoginResponse = new Gson().toJson(loginResponse); //This Google dependency convert a String to Json
+        String jsonLoginResponse = new Gson().toJson(loginResponse);
 
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setStatus(401);

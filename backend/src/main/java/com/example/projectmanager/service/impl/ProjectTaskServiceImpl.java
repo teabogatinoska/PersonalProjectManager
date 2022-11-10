@@ -1,18 +1,26 @@
 package com.example.projectmanager.service.impl;
 
 import com.example.projectmanager.exceptions.ProjectNotFoundException;
+import com.example.projectmanager.exceptions.TaskEndDateIsNotValidException;
 import com.example.projectmanager.model.Backlog;
+import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.ProjectTask;
+import com.example.projectmanager.model.User;
 import com.example.projectmanager.repository.BacklogRepository;
 import com.example.projectmanager.repository.ProjectRepository;
 import com.example.projectmanager.repository.ProjectTaskRepository;
+import com.example.projectmanager.repository.UserRepository;
 import com.example.projectmanager.service.ProjectTaskService;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class ProjectTaskServiceImpl implements ProjectTaskService {
 
     private final BacklogRepository backlogRepository;
+
+    private final UserRepository userRepository;
 
     private final ProjectTaskRepository projectTaskRepository;
 
@@ -20,8 +28,9 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
     private final ProjectServiceImpl projectService;
 
-    public ProjectTaskServiceImpl(BacklogRepository backlogRepository, ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository, ProjectServiceImpl projectService) {
+    public ProjectTaskServiceImpl(BacklogRepository backlogRepository, UserRepository userRepository, ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository, ProjectServiceImpl projectService) {
         this.backlogRepository = backlogRepository;
+        this.userRepository = userRepository;
         this.projectTaskRepository = projectTaskRepository;
         this.projectRepository = projectRepository;
         this.projectService = projectService;
@@ -33,6 +42,11 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         this.projectService.findProjectByIdentifier(id, username);
 
         return this.projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
+    }
+
+    public Project findProjectByBacklogId(String id, String username) {
+
+        return this.projectService.findProjectByIdentifier(id, username);
     }
 
     @Override
@@ -54,7 +68,9 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     @Override
     public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask, String username) {
         Backlog backlog = this.projectService.findProjectByIdentifier(projectIdentifier, username).getBacklog();
+        User user = this.userRepository.findByUsername(username);
         projectTask.setBacklog(backlog);
+
 
         Integer BacklogSequence = backlog.getPTSequence();
         BacklogSequence++;
@@ -62,7 +78,14 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
 
         projectTask.setProjectSequence(projectIdentifier + "-" + BacklogSequence);
         projectTask.setProjectIdentifier(projectIdentifier);
+        projectTask.setUser(user);
 
+        Date projectEndDate = backlog.getProject().getEnd_date();
+        Date taskEndDate = projectTask.getDueDate();
+
+        if (taskEndDate.compareTo(projectEndDate) > 0) {
+            throw new TaskEndDateIsNotValidException("The task end date: '" + taskEndDate + "' is after the project end date: '" + projectEndDate + "'");
+        }
         //default priority 3
         if (projectTask.getPriority() == null || projectTask.getPriority() == 0) {
             projectTask.setPriority(3);
@@ -75,7 +98,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     }
 
     @Override
-    public ProjectTask updateByProjectSequence(ProjectTask updatedTask, String backlog_id, String task_id, String username) {
+    public ProjectTask updateTaskByProjectSequence(ProjectTask updatedTask, String backlog_id, String task_id, String username) {
         ProjectTask projectTask = this.findProjectTaskByProjectSequence(backlog_id, task_id, username);
         projectTask = updatedTask;
 
@@ -83,7 +106,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
     }
 
     @Override
-    public void deleteByProjectSequence(String backlog_id, String task_id, String username) {
+    public void deleteTaskByProjectSequence(String backlog_id, String task_id, String username) {
         ProjectTask projectTask = this.findProjectTaskByProjectSequence(backlog_id, task_id, username);
         this.projectTaskRepository.delete(projectTask);
     }

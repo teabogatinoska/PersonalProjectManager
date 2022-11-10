@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@syncfusion/ej2-react-dropdowns": "^20.3.56",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.6",
     "jwt-decode": "^2.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-multi-select-component": "^4.3.4",
     "react-redux": "^7.1.0",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.1",
+    "react-scripts": "4.0.0",
+    "react-select": "5.3.2",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },
@@ -36,5 +39,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080",
+  "devDependencies": {
+    "prop-types": "^15.8.1"
+  }
 }

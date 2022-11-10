@@ -1,10 +1,16 @@
 package com.example.projectmanager.web;
 
+import com.example.projectmanager.exceptions.InvalidUserPermissionsException;
 import com.example.projectmanager.model.Project;
+import com.example.projectmanager.model.User;
+import com.example.projectmanager.model.dto.ProjectDto;
 import com.example.projectmanager.service.MapValidationErrorService;
 import com.example.projectmanager.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,33 +34,41 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result, Principal principal){
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody ProjectDto projectDto, BindingResult result, Principal principal) {
 
         ResponseEntity<?> errorMap = this.mapValidationErrorService.MapValidationService(result);
-        if(errorMap!=null) {
+        if (errorMap != null) {
             return errorMap;
         }
 
-        Project project1 = this.projectService.saveOrUpdateProject(project, principal.getName());
-        return new ResponseEntity<Project>(project1, HttpStatus.CREATED);
+        Project newProject = this.projectService.saveOrUpdateProject(projectDto, projectDto.getProjectLeader(), projectDto.getUsersIds());
+        return new ResponseEntity<Project>(newProject, HttpStatus.CREATED);
+
 
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<?> getProjectById(@PathVariable String projectId, Principal principal){
+    public ResponseEntity<?> getProjectById(@PathVariable String projectId, Principal principal) {
         Project project = this.projectService.findProjectByIdentifier(projectId, principal.getName());
         return new ResponseEntity<Project>(project, HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    public Iterable<Project> getAllProjects(Principal principal){
+    public Iterable<Project> getAllProjects(Principal principal) {
         return this.projectService.findAllProjects(principal.getName());
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<?> deleteProject(@PathVariable String projectId, Principal principal){
-        this.projectService.deleteProjectByIdentifier(projectId, principal.getName());
-        return new ResponseEntity<String> ("Project with ID: '"+projectId+"' was deleted.", HttpStatus.OK);
+    public ResponseEntity<?> deleteProject(@PathVariable String projectId, Principal principal) {
+
+        Project project = this.projectService.findProjectByIdentifier(projectId, principal.getName());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User authUser = (User) authentication.getPrincipal();
+
+        if (authUser.getUsername().equals(project.getProjectLeader())) {
+            this.projectService.deleteProjectByIdentifier(projectId, principal.getName());
+            return new ResponseEntity<String>("Project with ID: '" + projectId + "' was deleted.", HttpStatus.OK);
+        } else throw new InvalidUserPermissionsException("Only the project leader can perform this action!");
     }
 
 

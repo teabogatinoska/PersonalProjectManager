@@ -1,10 +1,16 @@
 package com.example.projectmanager.web;
 
+import com.example.projectmanager.exceptions.InvalidUserPermissionsException;
+import com.example.projectmanager.model.Backlog;
+import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.ProjectTask;
+import com.example.projectmanager.model.User;
 import com.example.projectmanager.service.MapValidationErrorService;
 import com.example.projectmanager.service.ProjectTaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,14 +34,17 @@ public class BacklogController {
     @PostMapping("/{backlog_id}")
     public ResponseEntity<?> addProjectTasktoBacklog(@Valid @RequestBody ProjectTask projectTask, BindingResult result, @PathVariable String backlog_id, Principal principal) {
 
-        ResponseEntity<?> errorMap = this.mapValidationErrorService.MapValidationService(result);
+        Project project = this.projectTaskService.findProjectByBacklogId(backlog_id, principal.getName());
 
-        if (errorMap != null) return errorMap;
+        if (principal.getName().equals(project.getProjectLeader())) {
+            ResponseEntity<?> errorMap = this.mapValidationErrorService.MapValidationService(result);
 
-        ProjectTask newProjectTask = this.projectTaskService.addProjectTask(backlog_id, projectTask, principal.getName());
+            if (errorMap != null) return errorMap;
 
-        return new ResponseEntity<ProjectTask>(newProjectTask, HttpStatus.CREATED);
+            ProjectTask newProjectTask = this.projectTaskService.addProjectTask(backlog_id, projectTask, principal.getName());
 
+            return new ResponseEntity<ProjectTask>(newProjectTask, HttpStatus.CREATED);
+        } else throw new InvalidUserPermissionsException("Only the project leader can perform this action!");
     }
 
     //Getting Backlog with Project Task by ID
@@ -58,18 +67,24 @@ public class BacklogController {
         ResponseEntity<?> errorMap = this.mapValidationErrorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        ProjectTask updatedTask = this.projectTaskService.updateByProjectSequence(projectTask, backlog_id, task_id, principal.getName());
+        ProjectTask updatedTask = this.projectTaskService.updateTaskByProjectSequence(projectTask, backlog_id, task_id, principal.getName());
 
         return new ResponseEntity<ProjectTask>(updatedTask, HttpStatus.OK);
     }
 
     @DeleteMapping("/{backlog_id}/{task_id}")
     public ResponseEntity<?> deleteProjectTask(@PathVariable String backlog_id, @PathVariable String task_id, Principal principal) {
-        this.projectTaskService.deleteByProjectSequence(backlog_id, task_id, principal.getName());
 
-        return new ResponseEntity<String>("Project Task with id:'" + task_id + "' was deleted successfully", HttpStatus.OK);
+        Project project = this.projectTaskService.findProjectByBacklogId(backlog_id, principal.getName());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // This gets the authentication
+        User authUser = (User) authentication.getPrincipal(); // This gets the logged in user
+        if (authUser.getUsername().equals(project.getProjectLeader())) {
+
+            this.projectTaskService.deleteTaskByProjectSequence(backlog_id, task_id, principal.getName());
+
+            return new ResponseEntity<String>("Project Task with id:'" + task_id + "' was deleted successfully", HttpStatus.OK);
+        } else throw new InvalidUserPermissionsException("Only the project leader can perform this action!");
     }
-
 
 }
 

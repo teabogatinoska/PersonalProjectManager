@@ -1,25 +1,12 @@
 package com.example.projectmanager.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import com.example.projectmanager.model.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -64,8 +51,15 @@ public class User implements UserDetails {
     private Date updated_At;
 
     //OneToMany with Project Relationship
+    //@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
+    //private List<Project> projects = new ArrayList<>();
+
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
-    private List<Project> projects = new ArrayList<>();
+    private List<ProjectTask> projectTasks = new ArrayList<>();
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
 
     public User() {
     }
@@ -112,6 +106,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
 
 }

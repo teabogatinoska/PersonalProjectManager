@@ -1,18 +1,23 @@
 package com.example.projectmanager.service.impl;
 
+import com.example.projectmanager.exceptions.InvalidProjectStartDateException;
 import com.example.projectmanager.exceptions.ProjectIdAlreadyExistsException;
 import com.example.projectmanager.exceptions.ProjectIdNotFoundException;
 import com.example.projectmanager.exceptions.ProjectNotFoundException;
 import com.example.projectmanager.model.Backlog;
 import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.User;
+import com.example.projectmanager.model.dto.ProjectDto;
 import com.example.projectmanager.repository.BacklogRepository;
 import com.example.projectmanager.repository.ProjectRepository;
 import com.example.projectmanager.repository.UserRepository;
 import com.example.projectmanager.service.ProjectService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -32,41 +37,45 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    public Project saveOrUpdateProject(Project project, String username) {
-        if (project.getId() != null) {
-            Project existingProject = this.projectRepository.findByProjectIdentifier(project.getProjectIdentifier());
+    public Project saveOrUpdateProject(ProjectDto projectDto, String leaderUsername, List<Long> userIds) {
+        if (projectDto.getId() != null) {
+            Project existingProject = this.projectRepository.findByProjectIdentifier(projectDto.getProjectIdentifier());
 
-            if (existingProject != null && (!existingProject.getProjectLeader().equals(username))) {
+            if (existingProject != null && (!existingProject.getProjectLeader().equals(leaderUsername))) {
                 throw new ProjectNotFoundException("Project not found in your account");
             } else if (existingProject == null) {
-                throw new ProjectNotFoundException("Project with ID:'" + project.getProjectIdentifier() + "' cannot be updated because it does not exist!");
+                throw new ProjectNotFoundException("Project with ID:'" + projectDto.getProjectIdentifier() + "' cannot be updated because it does not exist!");
             }
         }
 
         try {
-
-            User user = this.userRepository.findByUsername(username);
-            project.setUser(user);
-            project.setProjectLeader(user.getUsername());
+            Project project = new Project();
+            Set<User> usersSet = new HashSet<>(this.userRepository.findAllById(userIds));
+            project.setUsers(usersSet);
+            User projectLeader = this.userRepository.findByUsername(leaderUsername);
+            project.setProjectLeader(projectLeader.getUsername());
             project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
+            Date currentDate = new java.util.Date();
+
 
             //saving new project
-            if (project.getId() == null) {
+            if (projectDto.getId() == null) {
                 Backlog backlog = new Backlog();
                 project.setBacklog(backlog);
+                project.setStart_date(currentDate);
                 backlog.setProject(project);
                 backlog.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
             }
 
             //updating project
-            if (project.getId() != null) {
-                project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier().toUpperCase()));
+            if (projectDto.getId() != null) {
+                projectDto.setBacklog(backlogRepository.findByProjectIdentifier(projectDto.getProjectIdentifier().toUpperCase()));
             }
 
             return projectRepository.save(project);
 
         } catch (Exception e) {
-            throw new ProjectIdAlreadyExistsException("Project with ID: '" + project.getProjectIdentifier().toUpperCase() + "' already exists.");
+            throw new ProjectIdAlreadyExistsException("Project with ID: '" + projectDto.getProjectIdentifier().toUpperCase() + "' already exists.");
         }
     }
 
