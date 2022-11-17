@@ -3,12 +3,10 @@ package com.example.projectmanager.web;
 import com.example.projectmanager.exceptions.InvalidUserPermissionsException;
 import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.User;
-import com.example.projectmanager.model.dto.ProjectDto;
 import com.example.projectmanager.service.MapValidationErrorService;
 import com.example.projectmanager.service.ProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
@@ -34,14 +32,14 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody ProjectDto projectDto, BindingResult result, Principal principal) {
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result, Principal principal) {
 
         ResponseEntity<?> errorMap = this.mapValidationErrorService.MapValidationService(result);
         if (errorMap != null) {
             return errorMap;
         }
 
-        Project newProject = this.projectService.saveOrUpdateProject(projectDto, projectDto.getProjectLeader(), projectDto.getUsersIds());
+        Project newProject = this.projectService.saveOrUpdateProject(project, principal.getName(), project.getProjectUsers());
         return new ResponseEntity<Project>(newProject, HttpStatus.CREATED);
 
 

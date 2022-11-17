@@ -6,8 +6,6 @@ import com.example.projectmanager.model.Backlog;
 import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.ProjectTask;
 import com.example.projectmanager.model.User;
-import com.example.projectmanager.repository.BacklogRepository;
-import com.example.projectmanager.repository.ProjectRepository;
 import com.example.projectmanager.repository.ProjectTaskRepository;
 import com.example.projectmanager.repository.UserRepository;
 import com.example.projectmanager.service.ProjectTaskService;
@@ -18,21 +16,17 @@ import java.util.Date;
 @Service
 public class ProjectTaskServiceImpl implements ProjectTaskService {
 
-    private final BacklogRepository backlogRepository;
 
     private final UserRepository userRepository;
 
     private final ProjectTaskRepository projectTaskRepository;
 
-    private final ProjectRepository projectRepository;
-
     private final ProjectServiceImpl projectService;
 
-    public ProjectTaskServiceImpl(BacklogRepository backlogRepository, UserRepository userRepository, ProjectTaskRepository projectTaskRepository, ProjectRepository projectRepository, ProjectServiceImpl projectService) {
-        this.backlogRepository = backlogRepository;
+    public ProjectTaskServiceImpl(UserRepository userRepository, ProjectTaskRepository projectTaskRepository, ProjectServiceImpl projectService) {
+
         this.userRepository = userRepository;
         this.projectTaskRepository = projectTaskRepository;
-        this.projectRepository = projectRepository;
         this.projectService = projectService;
     }
 
@@ -44,6 +38,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         return this.projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
     }
 
+    @Override
     public Project findProjectByBacklogId(String id, String username) {
 
         return this.projectService.findProjectByIdentifier(id, username);

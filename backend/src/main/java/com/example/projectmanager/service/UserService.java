@@ -2,7 +2,6 @@ package com.example.projectmanager.service;
 
 import com.example.projectmanager.exceptions.UsernameAlreadyExistsException;
 import com.example.projectmanager.model.User;
-import com.example.projectmanager.model.enums.Role;
 import com.example.projectmanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

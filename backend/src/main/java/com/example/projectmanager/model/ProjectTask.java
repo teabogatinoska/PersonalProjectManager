@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
@@ -22,29 +21,28 @@ public class ProjectTask {
     @Column(updatable = false, unique = true)
     private String projectSequence;
 
-    @NotBlank(message = "Please include a Project Task Summary!")
+    @NotBlank(message = "Please include a Project Summary!")
     private String summary;
 
-    private String taskDescription;
     private String status;
     private Integer priority;
+
+    //ManyToOne with Backlog
+    @ManyToOne(fetch =FetchType.EAGER)
+    @JoinColumn(name="backlog_id",updatable = false,nullable = false)
+    @JsonIgnore
+    private Backlog backlog;
+
+    //ManyToOne with User
+    @ManyToOne(fetch =FetchType.EAGER)
+    @JoinColumn(name="user_id",updatable = false,nullable = false)
+    @JsonIgnore
+    private User user;
 
     @Column(updatable = false)
     private String projectIdentifier;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    //@JoinColumn(name = "backlog_id", updatable = false, nullable = false)
-    @JsonIgnore
-    private Backlog backlog;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    //@JoinColumn(name = "user_id", updatable = false, nullable = false)
-    @JsonIgnore
-    private User user;
-
-
     @JsonFormat(pattern = "yyyy-mm-dd")
-    @Future(message = "Task End date should not be in the past")
     private Date dueDate;
 
     @JsonFormat(pattern = "yyyy-mm-dd")
@@ -69,7 +67,7 @@ public class ProjectTask {
     @Override
     public String toString() {
         return "ProjectTask [id=" + id + ", projectSequence=" + projectSequence + ", summary=" + summary
-                + ", taskDescription=" + taskDescription + ", status=" + status + ", priority=" + priority
+                + ", status=" + status + ", priority=" + priority
                 + ", projectIdentifier=" + projectIdentifier + ", dueDate=" + dueDate + ", created_At=" + created_At
                 + ", updated_At=" + updated_At + "]";
     }

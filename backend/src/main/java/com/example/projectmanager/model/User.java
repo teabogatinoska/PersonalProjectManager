@@ -6,7 +6,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-import com.example.projectmanager.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "users")
 @Getter
 @Setter
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements UserDetails {
 
     @Id
@@ -50,16 +52,13 @@ public class User implements UserDetails {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updated_At;
 
-    //OneToMany with Project Relationship
-    //@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
-    //private List<Project> projects = new ArrayList<>();
-
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
+    @JsonIgnore
     private List<ProjectTask> projectTasks = new ArrayList<>();
 
-    @Enumerated(value = EnumType.STRING)
-    private Role role;
-
+    @ManyToMany(mappedBy = "projectUsers")
+    @JsonIgnore
+    Set<Project> projects;
 
     public User() {
     }
@@ -106,7 +105,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
 
 }

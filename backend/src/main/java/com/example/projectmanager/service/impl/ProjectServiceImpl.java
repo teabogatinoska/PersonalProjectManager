@@ -7,7 +7,6 @@ import com.example.projectmanager.exceptions.ProjectNotFoundException;
 import com.example.projectmanager.model.Backlog;
 import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.User;
-import com.example.projectmanager.model.dto.ProjectDto;
 import com.example.projectmanager.repository.BacklogRepository;
 import com.example.projectmanager.repository.ProjectRepository;
 import com.example.projectmanager.repository.UserRepository;
@@ -18,6 +17,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -37,21 +37,21 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    public Project saveOrUpdateProject(ProjectDto projectDto, String leaderUsername, List<Long> userIds) {
-        if (projectDto.getId() != null) {
-            Project existingProject = this.projectRepository.findByProjectIdentifier(projectDto.getProjectIdentifier());
+    public Project saveOrUpdateProject(Project project, String leaderUsername, Set<User> users) {
+        if (project.getId() != null) {
+            Project existingProject = this.projectRepository.findByProjectIdentifier(project.getProjectIdentifier());
 
             if (existingProject != null && (!existingProject.getProjectLeader().equals(leaderUsername))) {
                 throw new ProjectNotFoundException("Project not found in your account");
             } else if (existingProject == null) {
-                throw new ProjectNotFoundException("Project with ID:'" + projectDto.getProjectIdentifier() + "' cannot be updated because it does not exist!");
+                throw new ProjectNotFoundException("Project with ID:'" + project.getProjectIdentifier() + "' cannot be updated because it does not exist!");
             }
         }
 
         try {
-            Project project = new Project();
+            List<Long> userIds = users.stream().map(User::getId).collect(Collectors.toList());
             Set<User> usersSet = new HashSet<>(this.userRepository.findAllById(userIds));
-            project.setUsers(usersSet);
+            project.setProjectUsers(usersSet);
             User projectLeader = this.userRepository.findByUsername(leaderUsername);
             project.setProjectLeader(projectLeader.getUsername());
             project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
@@ -59,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 
             //saving new project
-            if (projectDto.getId() == null) {
+            if (project.getId() == null) {
                 Backlog backlog = new Backlog();
                 project.setBacklog(backlog);
                 project.setStart_date(currentDate);
@@ -68,26 +68,27 @@ public class ProjectServiceImpl implements ProjectService {
             }
 
             //updating project
-            if (projectDto.getId() != null) {
-                projectDto.setBacklog(backlogRepository.findByProjectIdentifier(projectDto.getProjectIdentifier().toUpperCase()));
+            if (project.getId() != null) {
+                project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier().toUpperCase()));
             }
 
             return projectRepository.save(project);
 
         } catch (Exception e) {
-            throw new ProjectIdAlreadyExistsException("Project with ID: '" + projectDto.getProjectIdentifier().toUpperCase() + "' already exists.");
+            throw new ProjectIdAlreadyExistsException("Project with ID: '" + project.getProjectIdentifier().toUpperCase() + "' already exists.");
         }
     }
 
     @Override
     public Project findProjectByIdentifier(String projectId, String username) {
         Project project = this.projectRepository.findByProjectIdentifier(projectId.toUpperCase());
+        User user = this.userRepository.findByUsername(username);
 
         if (project == null) {
             throw new ProjectIdNotFoundException("Project with ID: '" + projectId + "' does not exist.");
         }
 
-        if (!project.getProjectLeader().equals(username)) {
+        if (!project.getProjectUsers().contains(user)) {
             throw new ProjectNotFoundException("Project not found in your account!");
         }
 
@@ -97,7 +98,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> findAllProjects(String username) {
-        return this.projectRepository.findAllByProjectLeader(username);
+        User user = this.userRepository.findByUsername(username);
+        return this.projectRepository.findAllByProjectUsers(user);
     }
 
     @Override

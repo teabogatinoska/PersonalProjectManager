@@ -1,6 +1,7 @@
 package com.example.projectmanager.repository;
 
 import com.example.projectmanager.model.Project;
+import com.example.projectmanager.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAll();
 
     List<Project> findAllByProjectLeader(String username);
+    List<Project> findAllByProjectUsers(User user);
 
 }
 

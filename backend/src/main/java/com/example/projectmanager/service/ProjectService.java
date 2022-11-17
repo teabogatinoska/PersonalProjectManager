@@ -1,13 +1,14 @@
 package com.example.projectmanager.service;
 
 import com.example.projectmanager.model.Project;
-import com.example.projectmanager.model.dto.ProjectDto;
+import com.example.projectmanager.model.User;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ProjectService {
 
-    Project saveOrUpdateProject(ProjectDto project, String leaderUsername, List<Long> userIds);
+    Project saveOrUpdateProject(Project project, String leaderUsername, Set<User> users);
 
     Project findProjectByIdentifier(String projectId, String username);
 

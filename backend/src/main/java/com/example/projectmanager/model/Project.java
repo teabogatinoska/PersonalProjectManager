@@ -1,7 +1,6 @@
 package com.example.projectmanager.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +14,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Project {
 
     @Id
@@ -52,10 +52,14 @@ public class Project {
     @JsonIgnore // It won't show this backlog (with all project tasks) object when search a project by id
     private Backlog backlog;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "project_users",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "users_id"))
     @JsonIgnore
-    private Set<User> users;
+    private Set<User> projectUsers;
+
 
     private String projectLeader;
 
