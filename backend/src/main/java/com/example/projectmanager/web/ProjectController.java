@@ -2,7 +2,6 @@ package com.example.projectmanager.web;
 
 import com.example.projectmanager.exceptions.InvalidUserPermissionsException;
 import com.example.projectmanager.model.Project;
-import com.example.projectmanager.model.ProjectTask;
 import com.example.projectmanager.model.User;
 import com.example.projectmanager.model.dto.ProjectDto;
 import com.example.projectmanager.service.MapValidationErrorService;

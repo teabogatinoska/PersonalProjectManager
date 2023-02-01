@@ -33,53 +33,6 @@ public class ProjectServiceImpl implements ProjectService {
         this.userRepository = userRepository;
     }
 
-
-    @Override
-    public Project saveOrUpdateProject(Project project, String leaderUsername, List<User> users) {
-
-        if (project.getId() != null) {
-            Project existingProject = this.projectRepository.findByProjectIdentifier(project.getProjectIdentifier());
-
-            if (existingProject != null && (!existingProject.getProjectLeader().equals(leaderUsername))) {
-                throw new ProjectNotFoundException("Project not found in your account");
-            } else if (existingProject == null) {
-                throw new ProjectNotFoundException("Project with ID:'" + project.getProjectIdentifier() + "' cannot be updated because it does not exist!");
-            }
-        }
-
-        try {
-            List<User> usersSet = new ArrayList<>();
-            for(int i=0; i<users.size(); i++){
-                usersSet.add(this.userRepository.findByUsername(users.get(i).getUsername()));
-            }
-            project.setProjectUsers(usersSet);
-            User projectLeader = this.userRepository.findByUsername(leaderUsername);
-            project.setProjectLeader(projectLeader.getUsername());
-            project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
-            Date currentDate = new java.util.Date();
-
-
-            //saving new project
-            if (project.getId() == null) {
-                Backlog backlog = new Backlog();
-                project.setBacklog(backlog);
-                project.setStart_date(currentDate);
-                backlog.setProject(project);
-                backlog.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
-            }
-
-            //updating project
-            if (project.getId() != null) {
-                project.setBacklog(backlogRepository.findByProjectIdentifier(project.getProjectIdentifier().toUpperCase()));
-            }
-
-            return projectRepository.save(project);
-
-        } catch (Exception e) {
-            throw new ProjectIdAlreadyExistsException("Project with ID: '" + project.getProjectIdentifier().toUpperCase() + "' already exists.");
-        }
-    }
-
     @Override
     public Optional<Project> save(ProjectDto projectDto, String leader) {
         Project project = new Project();

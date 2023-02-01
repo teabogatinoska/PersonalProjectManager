@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface ProjectService {
 
-    Project saveOrUpdateProject(Project project, String leaderUsername, List<User> users);
-
     Optional<Project> save(ProjectDto projectDto, String leader);
 
     Optional<Project> edit(ProjectDto projectDto, String leader);
