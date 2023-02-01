@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
@@ -21,28 +22,32 @@ public class ProjectTask {
     @Column(updatable = false, unique = true)
     private String projectSequence;
 
-    @NotBlank(message = "Please include a Project Summary!")
+    @NotBlank(message = "Please include a Project task Summary!")
     private String summary;
+
+    @NotBlank(message = "Please include a Project task Description!")
+    private String taskDescription;
 
     private String status;
     private Integer priority;
 
     //ManyToOne with Backlog
-    @ManyToOne(fetch =FetchType.EAGER)
-    @JoinColumn(name="backlog_id",updatable = false,nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;
 
     //ManyToOne with User
-    @ManyToOne(fetch =FetchType.EAGER)
-    @JoinColumn(name="user_id",updatable = false,nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
     @Column(updatable = false)
     private String projectIdentifier;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Future(message = "Task End date should not be in the past")
     private Date dueDate;
 
     @JsonFormat(pattern = "yyyy-mm-dd")
@@ -53,6 +58,7 @@ public class ProjectTask {
 
     public ProjectTask() {
     }
+
 
     @PrePersist
     protected void onCreate() {
@@ -66,12 +72,20 @@ public class ProjectTask {
 
     @Override
     public String toString() {
-        return "ProjectTask [id=" + id + ", projectSequence=" + projectSequence + ", summary=" + summary
-                + ", status=" + status + ", priority=" + priority
-                + ", projectIdentifier=" + projectIdentifier + ", dueDate=" + dueDate + ", created_At=" + created_At
-                + ", updated_At=" + updated_At + "]";
+        return "ProjectTask{" +
+                "id=" + id +
+                ", projectSequence='" + projectSequence + '\'' +
+                ", summary='" + summary + '\'' +
+                ", taskDescription='" + taskDescription + '\'' +
+                ", status='" + status + '\'' +
+                ", priority=" + priority +
+                ", backlog=" + backlog +
+                ", user=" + user +
+                ", projectIdentifier='" + projectIdentifier + '\'' +
+                ", dueDate=" + dueDate +
+                ", created_At=" + created_At +
+                ", updated_At=" + updated_At +
+                '}';
     }
-
-
 }
 

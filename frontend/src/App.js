@@ -3,9 +3,9 @@ import './App.css';
 import Dashboard from './components/Dashboard';
 import Header from './components/Layout/Header';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import AddProject from './components/Project/AddProject';
-import { Provider } from 'react-redux';
+import {Provider} from 'react-redux';
 import store from './store';
 import UpdateProject from './components/Project/UpdateProject';
 import ProjectBoard from './components/BacklogBoard/ProjectBoard';
@@ -16,9 +16,10 @@ import Register from './components/User/Register';
 import Login from './components/User/Login';
 import jwt_decode from 'jwt-decode';
 import setJWTToken from './security/setJWTToken';
-import { SET_CURRENT_USER } from './services/types';
-import { logout } from './services/SecurityService';
+import {SET_CURRENT_USER} from './services/types';
+import {logout} from './services/SecurityService';
 import SecuredRoute from './security/secureRoute';
+import Footer from "./components/Layout/Footer";
 
 const jwtToken = localStorage.jwtToken;
 
@@ -43,29 +44,25 @@ function App() {
         <Provider store={store}>
             <Router>
                 <div className="App">
-                    <Header />
+                    <Header/>
 
-                    {
-                        //public routes
-                    }
-
-                    <Route exact path="/" component={Landing} />
-                    <Route exact path="/register" component={Register} />
-                    <Route exact path="/login" component={Login} />
-
-                    {
-                        //private routes
-                    }
+                    <Route exact path="/" component={Landing}/>
+                    <Route exact path="/register" component={Register}/>
+                    <Route exact path="/login" component={Login}/>
 
                     <Switch>
-                        <SecuredRoute exact path="/dashboard" component={Dashboard} />
-                        <SecuredRoute exact path="/addProject" component={AddProject} />
-                        <SecuredRoute exact path="/updateProject/:id" component={UpdateProject} />
-                        <SecuredRoute exact path="/projectBoard/:id" component={ProjectBoard} />
-                        <SecuredRoute exact path="/addProjectTask/:id" component={AddProjectTask} />
-                        <SecuredRoute exact path="/updateProjectTask/:backlog_id/:pt_id" component={UpdateProjectTask} />
+                        <SecuredRoute exact path="/dashboard" component={Dashboard}/>
+                        <SecuredRoute exact path="/addProject" component={AddProject}/>
+                        <SecuredRoute exact path="/updateProject/:id" component={UpdateProject}/>
+                        <SecuredRoute exact path="/projectBoard/:id" component={ProjectBoard}/>
+                        <SecuredRoute exact path="/addProjectTask/:id" component={AddProjectTask}/>
+                        <SecuredRoute exact path="/updateProjectTask/:backlog_id/:pt_id" component={UpdateProjectTask}/>
                     </Switch>
                 </div>
+
+                <br/><br/><br/>
+                <Footer/>
+
             </Router>
         </Provider>
     );

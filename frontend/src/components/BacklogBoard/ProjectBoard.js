@@ -32,7 +32,7 @@ class ProjectBoard extends Component {
 
         let BoardContent;
 
-        const boardAlgorithm = (errors, project_tasks) => {
+        const boardTasks = (errors, project_tasks) => {
             if (project_tasks.length < 1) {
                 if (errors.projectNotFound) {
                     return (
@@ -58,18 +58,20 @@ class ProjectBoard extends Component {
             }
         };
 
-        BoardContent = boardAlgorithm(errors, project_tasks);
+        BoardContent = boardTasks(errors, project_tasks);
 
 
 
         return (
+            <div className="backlog">
             <div className="container">
-                <Link to={`/addProjectTask/${id}`} className="btn btn-primary mb-3">
+                <Link to={`/addProjectTask/${id}`} className="btn rounded btn-primary mb-3">
                     <i className="fas fa-plus-circle"> Create Project Task</i>
                 </Link>
                 <br />
                 <hr />
                 {BoardContent}
+            </div>
             </div>
 
         )

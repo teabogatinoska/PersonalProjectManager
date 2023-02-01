@@ -1,5 +1,6 @@
 package com.example.projectmanager.web;
 
+import com.example.projectmanager.model.Project;
 import com.example.projectmanager.model.User;
 import com.example.projectmanager.payload.request.LoginRequest;
 import com.example.projectmanager.payload.response.JWTLoginSuccessResponse;
@@ -17,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.security.Principal;
 
 import static com.example.projectmanager.security.SecurityConstants.TOKEN_PREFIX;
 
@@ -75,5 +78,17 @@ public class UserController {
 
         return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
 
+    }
+
+    @GetMapping("/all")
+    public Iterable<User> getAllUsers() {
+        return this.userService.getAllUsers();
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<?> getUserInfo(@PathVariable String userId){
+
+        User foundUser = this.userService.getUserInfo(userId);
+        return new ResponseEntity<User>(foundUser, HttpStatus.OK);
     }
 }

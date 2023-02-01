@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_ERRORS, GET_PROJECTS, GET_PROJECT, DELETE_PROJECT, GET_ALL_USERS } from './types';
+import {GET_ERRORS, GET_PROJECTS, GET_PROJECT, DELETE_PROJECT, GET_PROJECT_USERS} from './types';
 
 
 export const createProject = (project, history) => async dispatch => {
@@ -18,6 +18,25 @@ export const createProject = (project, history) => async dispatch => {
 
     }
 };
+
+export const updateProject = (id, project, history) => async dispatch => {
+    try {
+        await axios.patch(`/api/project/updateProject/${id}`, project);
+        history.push("/dashboard");
+        dispatch({
+            type: GET_ERRORS,
+            payload: {}
+        });
+    } catch (err) {
+
+        dispatch({
+            type: GET_ERRORS,
+            payload: err.response.data
+        });
+
+    }
+};
+
 
 export const getProjects = () => async dispatch => {
     const res = await axios.get("/api/project/all")
@@ -50,10 +69,12 @@ export const deleteProject = id => async dispatch => {
     }
 
 }
-export const getUsers = () => async dispatch => {
-    const res = await axios.get("/api/project/users")
+
+export const getProjectUsers = project_id => async dispatch => {
+    const res = await axios.get(`/api/project/projectUsers/${project_id}`)
     dispatch({
-        type: GET_ALL_USERS,
+        type: GET_PROJECT_USERS,
         payload: res.data
     })
 }
+

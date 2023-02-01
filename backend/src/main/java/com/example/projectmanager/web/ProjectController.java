@@ -2,7 +2,9 @@ package com.example.projectmanager.web;
 
 import com.example.projectmanager.exceptions.InvalidUserPermissionsException;
 import com.example.projectmanager.model.Project;
+import com.example.projectmanager.model.ProjectTask;
 import com.example.projectmanager.model.User;
+import com.example.projectmanager.model.dto.ProjectDto;
 import com.example.projectmanager.service.MapValidationErrorService;
 import com.example.projectmanager.service.ProjectService;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/project")
@@ -32,17 +36,28 @@ public class ProjectController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result, Principal principal) {
-
+    public ResponseEntity<?> createNewProject(@Valid @RequestBody ProjectDto projectDto, BindingResult result, Principal principal) {
         ResponseEntity<?> errorMap = this.mapValidationErrorService.MapValidationService(result);
         if (errorMap != null) {
             return errorMap;
+        } else {
+            System.out.println("Project Dto: " + projectDto.toString());
+            return this.projectService.save(projectDto, principal.getName()).map(project -> ResponseEntity.ok().body(project))
+                    .orElseGet(() -> ResponseEntity.badRequest().build());
         }
 
-        Project newProject = this.projectService.saveOrUpdateProject(project, principal.getName(), project.getProjectUsers());
-        return new ResponseEntity<Project>(newProject, HttpStatus.CREATED);
+    }
 
+    @PatchMapping("/updateProject/{projectId}")
+    public ResponseEntity<Project> updateProject(@Valid @RequestBody ProjectDto projectDto,  @PathVariable String projectId) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User authUser = (User) authentication.getPrincipal();
+
+        if (authUser.getUsername().equals(projectDto.getProjectLeader())) {
+            return this.projectService.edit(projectDto, authUser.getUsername()).map(project -> ResponseEntity.ok().body(project))
+                    .orElseGet(() -> ResponseEntity.badRequest().build());
+        } else throw new InvalidUserPermissionsException("Only the project leader can perform this action!");
     }
 
     @GetMapping("/{projectId}")
@@ -69,6 +84,11 @@ public class ProjectController {
         } else throw new InvalidUserPermissionsException("Only the project leader can perform this action!");
     }
 
+    @GetMapping("/projectUsers/{project_id}")
+    public Iterable<?> getProjectUsers(@PathVariable Long project_id) {
+        List<User> userList = this.projectService.getProjectUsers(project_id);
+        return userList;
+    }
 
 }
 

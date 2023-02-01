@@ -2,14 +2,19 @@ export const GET_ERRORS = 'GET_ERRORS';
 export const GET_PROJECTS = 'GET_PROJECTS';
 export const GET_PROJECT = 'GET_PROJECT';
 export const DELETE_PROJECT = 'DELETE_PROJECT';
-
-//Types for Backlog Actions
+export const GET_PROJECT_USERS = 'GET_PROJECT_USERS';
+export const GET_PROJECT_USER = 'GET_PROJECT_USER';
 
 export const GET_BACKLOG = 'GET_BACKLOG';
 export const GET_PROJECT_TASK = 'GET_PROJECT_TASK';
 export const DELETE_PROJECT_TASK = 'DELETE_PROJECT_TASK';
+export const GET_PROJECT_TASK_USER = 'GET_PROJECT_TASK_USER';
+export const GET_PROJECT_TASK_USERS = 'GET_PROJECT_TASK_USERS';
 
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
-export const GET_ALL_USERS = 'GET_ALL_USERS'
+export const GET_USERS = 'GET_USERS'
+export const GET_USER = 'GET_USER'
+
+
 
 

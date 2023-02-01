@@ -54,4 +54,10 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
         InvalidUserPermissionsExceptionResponse exceptionResponse = new InvalidUserPermissionsExceptionResponse(ex.getMessage());
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleUserIdNotFoundException(UserIdNotFoundException ex, WebRequest request){
+        UserIdNotFoundExceptionResponse exceptionResponse = new UserIdNotFoundExceptionResponse(ex.getMessage());
+        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }

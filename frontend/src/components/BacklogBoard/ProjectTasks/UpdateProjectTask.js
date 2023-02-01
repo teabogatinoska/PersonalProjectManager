@@ -1,9 +1,11 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux';
+import React, {Component} from 'react'
+import {connect} from 'react-redux';
 import classnames from 'classnames';
-import { getProjectTask, updateProjectTask } from '../../../services/backlogService';
+import {getProjectTask, updateProjectTask} from '../../../services/backlogService';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import {getUsers} from '../../../services/userService';
+
 
 class UpdateProjectTask extends Component {
 
@@ -11,30 +13,31 @@ class UpdateProjectTask extends Component {
         super()
 
         this.state = {
-            id: "",
-            projectSequence: "",
             summary: "",
             taskDescription: "",
             status: "",
-            priority: "",
-            dueDate: "",
+            priority: 0,
+            user: "",
             projectIdentifier: "",
-            created_At: "",
+            dueDate: "",
             errors: {}
         };
+
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentDidMount() {
-        const { backlog_id, pt_id } = this.props.match.params;
-        this.props.getProjectTask(backlog_id, pt_id, this.props.history)
+        const {backlog_id, pt_id} = this.props.match.params;
+        this.props.getProjectTask(backlog_id, pt_id, this.props.history);
+        this.props.getUsers();
+
     }
 
     componentWillReceiveProps(nextProps) {
 
         if (nextProps.errors) {
-            this.setState({ errors: nextProps.errors });
+            this.setState({errors: nextProps.errors});
         }
 
         const {
@@ -44,6 +47,7 @@ class UpdateProjectTask extends Component {
             taskDescription,
             status,
             priority,
+            user,
             projectIdentifier,
             dueDate,
             created_At
@@ -56,6 +60,7 @@ class UpdateProjectTask extends Component {
             taskDescription,
             status,
             priority,
+            user,
             projectIdentifier,
             dueDate,
             created_At
@@ -64,11 +69,12 @@ class UpdateProjectTask extends Component {
     }
 
     onChange(e) {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({[e.target.name]: e.target.value.trim()})
     }
 
     onSubmit(e) {
         e.preventDefault();
+
         const UpdateProjectTask = {
             id: this.state.id,
             projectSequence: this.state.projectSequence,
@@ -76,12 +82,15 @@ class UpdateProjectTask extends Component {
             taskDescription: this.state.taskDescription,
             status: this.state.status,
             priority: this.state.priority,
+            user: this.state.user,
             projectIdentifier: this.state.projectIdentifier,
             dueDate: this.state.dueDate,
             created_At: this.state.created_At,
             updated_At: this.state.updated_At
         }
-        //console.log(UpdatedProjectTask);
+
+        console.log("PROJECT TASK: ", JSON.stringify(UpdateProjectTask));
+
         this.props.updateProjectTask(this.state.projectIdentifier, this.state.projectSequence, UpdateProjectTask, this.props.history);
 
     }
@@ -89,56 +98,89 @@ class UpdateProjectTask extends Component {
 
     render() {
 
-        const { errors } = this.state;
+        const {errors} = this.state;
+        const {users} = this.props.user;
+
 
         return (
-            <div className="add-PBI">
+            <div className="addProjectTask">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-8 m-auto">
-                            <Link to={`/projectBoard/${this.state.projectIdentifier}`} className="btn btn-light">
-                                Back to Project Board
-                            </Link>
-                            <h4 className="display-4 text-center"> Update Project Task</h4>
-                            <p className="lead text-center"> Project Name: {this.state.projectIdentifier} |  Project Task ID:{""} {this.state.projectSequence} {""}</p>
-                            <form onSubmit={this.onSubmit}>
-                                <div className="form-group">
-                                    <input type="text" className={classnames("form-control form-control-lg", {
-                                        "is-invalid": errors.summary
-                                    })} name="summary" placeholder="Project Task summary" value={this.state.summary} onChange={this.onChange} />
-                                    {
-                                        errors.summary && (
-                                            <div className="invalid-feeback">{errors.summary}</div>
-                                        )
-                                    }
+                            <div className="card shadow">
+                                <div className="card-header rounded forms">
+                                    <h5 className="text-center">Update Task Details </h5>
+                                    <p className=" updateText text-center">Task
+                                        ID:{""} {this.state.projectSequence} {""}</p>
+                                    <hr/>
                                 </div>
-                                <div className="form-group">
-                                    <textarea className="form-control form-control-lg" placeholder="Task Description" name="taskDescription" value={this.state.taskDescription} onChange={this.onChange}></textarea>
-                                </div>
-                                <h6>Due Date</h6>
-                                <div className="form-group">
-                                    <input type="date" className="form-control form-control-lg" name="dueDate" value={this.state.dueDate} onChange={this.onChange} />
-                                </div>
-                                <div className="form-group">
-                                    <select className="form-control form-control-lg" name="priority" value={this.state.priority} onChange={this.onChange}>
-                                        <option value={0}>Select Priority</option>
-                                        <option value={1}>High</option>
-                                        <option value={2}>Medium</option>
-                                        <option value={3}>Low</option>
-                                    </select>
-                                </div>
+                                <div className="card-body">
+                                    <form onSubmit={this.onSubmit}>
+                                        <div className="form-group">
+                                            <label>Task Name</label>
+                                            <input type="text" className={classnames("form-control form-control-lg", {
+                                                "is-invalid": errors.summary
+                                            })} name="summary"
+                                                   value={this.state.summary} onChange={this.onChange}/>
+                                            {
+                                                errors.summary && (
+                                                    <div className="invalid-feeback">{errors.summary}</div>
+                                                )
+                                            }
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Task Description</label>
+                                            <textarea className={classnames("form-control form-control-lg", {
+                                                "is-invalid": errors.taskDescription
+                                            })} name="taskDescription"
+                                                      value={this.state.taskDescription} onChange={this.onChange}/>
+                                        </div>
+                                        <label>Due Date</label>
+                                        <div className="form-group">
+                                            <label>Task Due Date can not be after Project End Date</label>
+                                            <input type="text" className="form-control form-control-lg" name="dueDate"
+                                                   value={this.state.dueDate}
+                                                   onChange={this.onChange}/>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Task Priority</label>
+                                            <select className="form-control form-control-lg" name="priority"
+                                                    value={this.state.priority} onChange={this.onChange}>
+                                                <option value={0}>Select Priority</option>
+                                                <option value={1}>High</option>
+                                                <option value={2}>Medium</option>
+                                                <option value={3}>Low</option>
+                                            </select>
+                                        </div>
 
-                                <div className="form-group">
-                                    <select className="form-control form-control-lg" name="status" value={this.state.status} onChange={this.onChange}>
-                                        <option value="">Select Status</option>
-                                        <option value="TO_DO">TO DO</option>
-                                        <option value="IN_PROGRESS">IN PROGRESS</option>
-                                        <option value="DONE">DONE</option>
-                                    </select>
+                                        <div className="form-group">
+                                            <label>Task Status</label>
+                                            <select className="form-control form-control-lg" name="status"
+                                                    value={this.state.status} onChange={this.onChange}>
+                                                <option value="">Select Status</option>
+                                                <option value="TO_DO">TO DO</option>
+                                                <option value="IN_PROGRESS">IN PROGRESS</option>
+                                                <option value="DONE">DONE</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Assign to:</label>
+                                            <select name="user" className="form-control form-control-lg"
+                                                    onChange={this.onChange}>
+                                                <option value="">Select User</option>
+                                                {users.map((term) =>
+                                                    <option value={term.username}>{term.username}</option>
+                                                )}
+                                            </select>
+                                        </div>
+                                        <input type="submit" className="btn btn-primary btn-lg submitBtn "/>
+                                        <Link to={`/projectBoard/${this.state.projectIdentifier}`}
+                                              className="btn btn-info btn-lg backBtn">
+                                            Back to Project Board
+                                        </Link>
+                                    </form>
                                 </div>
-
-                                <input type="submit" className="btn btn-primary btn-block mt-4" />
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -151,13 +193,16 @@ UpdateProjectTask.propTypes = {
     getProjectTask: PropTypes.func.isRequired,
     project_task: PropTypes.object.isRequired,
     updateProjectTask: PropTypes.func.isRequired,
-    errors: PropTypes.object.isRequired
+    getUsers: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+    errors: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({
     project_task: state.backlog.project_task,
+    user: state.user,
     errors: state.errors
 });
 
 
-export default connect(mapStateToProps, { getProjectTask, updateProjectTask })(UpdateProjectTask);
+export default connect(mapStateToProps, {getProjectTask, updateProjectTask, getUsers})(UpdateProjectTask);

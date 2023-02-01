@@ -1,11 +1,14 @@
-import React, { Component } from 'react'
-import { getProject, createProject } from '../../services/projectService';
+import React, {Component} from 'react'
+import {getProject, updateProject} from '../../services/projectService';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import classnames from 'classnames';
+import '../../App.css';
+import {getUsers} from "../../services/userService";
+
 
 class UpdateProject extends Component {
-    //set state
+
     constructor() {
         super()
 
@@ -16,16 +19,19 @@ class UpdateProject extends Component {
             description: "",
             start_date: "",
             end_date: "",
+            projectUsers: [],
+            projectLeader: "",
             errors: {}
         }
         this.onChange = this.onChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
 
         if (nextProps.errors) {
-            this.setState({ errors: nextProps.errors });
+            this.setState({errors: nextProps.errors});
         }
 
         const {
@@ -34,7 +40,9 @@ class UpdateProject extends Component {
             projectIdentifier,
             description,
             start_date,
-            end_date
+            end_date,
+            projectUsers,
+            projectLeader,
         } = nextProps.project
 
         this.setState({
@@ -43,18 +51,26 @@ class UpdateProject extends Component {
             projectIdentifier,
             description,
             start_date,
-            end_date
+            end_date,
+            projectUsers,
+            projectLeader,
         });
     }
 
 
     componentDidMount() {
-        const { id } = this.props.match.params;
+        const {id} = this.props.match.params;
         this.props.getProject(id, this.props.history);
+        this.props.getUsers();
     }
 
     onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({[e.target.name]: e.target.value});
+    }
+
+    handleChange = (e) => {
+        let value = Array.from(e.target.selectedOptions, option => option.value);
+        this.setState({projectUsers: value});
     }
 
     onSubmit(e) {
@@ -66,59 +82,84 @@ class UpdateProject extends Component {
             projectIdentifier: this.state.projectIdentifier,
             description: this.state.description,
             start_date: this.state.start_date,
-            end_date: this.state.end_date
+            end_date: this.state.end_date,
+            projectUsers: this.state.projectUsers,
+            projectLeader: this.state.projectLeader
         };
 
-        this.props.createProject(updateProject, this.props.history);
+        this.props.updateProject(this.state.id, updateProject, this.props.history);
     }
 
     render() {
 
-        const { errors } = this.state;
+        const {errors} = this.state;
+        const {users} = this.props.user;
 
         return (
             <div className="project">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-8 m-auto">
-                            <h5 className="display-4 text-center">Update Project form</h5>
-                            <hr />
-                            <form onSubmit={this.onSubmit}>
-                                <div className="form-group">
-                                    <input type="text" className={classnames("form-control form-control-lg", {
-                                        "is-invalid": errors.projectName
-                                    })} name="projectName" placeholder="Project Name" value={this.state.projectName} onChange={this.onChange} />
-                                    {
-                                        errors.projectName && (
-                                            <div className="invalid-feedback">{errors.projectName}</div>
-                                        )
-                                    }
+                            <div className="card shadow">
+                                <div className="card-header rounded forms">
+                                    <h1 className="display-5 text-center">Update Project Details </h1>
                                 </div>
-                                <div className="form-group">
-                                    <input type="text" className="form-control form-control-lg" name="projectIdentifier" placeholder="Unique Project ID" value={this.state.projectIdentifier} onChange={this.onChange}
-                                           disabled />
-                                </div>
-                                <div className="form-group">
-                                    <textarea className={classnames("form-control form-control-lg", {
-                                        "is-invalid": errors.description
-                                    })} name="description" placeholder="Project Description" value={this.state.description} onChange={this.onChange} />
-                                    {
-                                        errors.description && (
-                                            <div className="invalid-feedback">{errors.description}</div>
-                                        )
-                                    }
-                                </div>
-                                {/*<h6>Start Date</h6>
-                                <div className="form-group">
-                                    <input type="date" className="form-control form-control-lg" name="start_date" value={this.state.start_date} onChange={this.onChange} />
-                                </div>*/}
-                                <h6>Estimated End Date</h6>
-                                <div className="form-group">
-                                    <input type="date" className="form-control form-control-lg" name="end_date" value={this.state.end_date} onChange={this.onChange} />
-                                </div>
+                                <div className="card-body">
+                                    <form onSubmit={this.onSubmit}>
+                                        <div className="form-group">
+                                            <label>Project Name</label>
+                                            <input type="text" className={classnames("form-control form-control-lg", {
+                                                "is-invalid": errors.projectName
+                                            })} name="projectName" value={this.state.projectName}
+                                                   onChange={this.onChange}/>
+                                            {
+                                                errors.projectName && (
+                                                    <div className="invalid-feedback">{errors.projectName}</div>
+                                                )
+                                            }
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Project ID</label>
+                                            <input type="text" className="form-control form-control-lg"
+                                                   name="projectIdentifier"
+                                                   value={this.state.projectIdentifier} onChange={this.onChange}
+                                                   disabled/>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Project Description</label>
+                                            <textarea className={classnames("form-control form-control-lg", {
+                                                "is-invalid": errors.description
+                                            })} name="description"
+                                                      value={this.state.description} onChange={this.onChange}/>
+                                            {errors.description && (
+                                                <div className="invalid-feedback">{errors.description}</div>
+                                            )}
+                                        </div>
+                                        <label>Estimated End Date</label>
+                                        <div className="form-group">
+                                            <input type="date" className="form-control form-control-lg" name="dueDate"
+                                                   value={this.state.end_date}
+                                                   onChange={this.onChange}/>
 
-                                <input type="submit" className="btn btn-primary btn-block mt-4" />
-                            </form>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Add Members:</label>
+                                            <select multiple={true} name="projectUsers" id="projectUsers"
+                                                    value={this.state.projectUsers}
+                                                    className="  form-control form-control-lg"
+                                                    onChange={this.handleChange}>
+                                                {users.map((term) =>
+                                                    <option value={term.username}>{term.username}</option>
+                                                )}
+                                            </select>
+
+                                        </div>
+
+                                        <input type="submit" className="btn btn-primary btn-block mt-4"/>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,14 +171,17 @@ class UpdateProject extends Component {
 
 UpdateProject.propTypes = {
     getProject: PropTypes.func.isRequired,
-    createProject: PropTypes.func.isRequired,
+    updateProject: PropTypes.func.isRequired,
+    getUsers: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
     project: state.project.project,
+    user: state.user,
     errors: state.errors
 });
 
-export default connect(mapStateToProps, { getProject, createProject })(UpdateProject);
+export default connect(mapStateToProps, {getProject, updateProject, getUsers})(UpdateProject);

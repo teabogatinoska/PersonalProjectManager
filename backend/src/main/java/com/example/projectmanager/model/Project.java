@@ -9,6 +9,7 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,20 +33,20 @@ public class Project {
     @NotBlank(message = "Project description is required")
     private String description;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Future(message = "Project start date should not be in the past")
     private Date start_date;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
-    @Future(message = "Task End date should not be in the past")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Future(message = "Project End date should not be in the past")
     private Date end_date;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Future(message = "Project start date should not be in the past")
     @Column(updatable = false)
     private Date created_At;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updated_At;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "project")
@@ -58,7 +59,9 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "users_id"))
     @JsonIgnore
-    private Set<User> projectUsers;
+    private List<User> projectUsers;
+
+   // private List<String> usernames;
 
 
     private String projectLeader;

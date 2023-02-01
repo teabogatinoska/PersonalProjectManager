@@ -1,8 +1,10 @@
-import { GET_PROJECTS, GET_PROJECT, DELETE_PROJECT } from '../services/types';
+import {GET_PROJECTS, GET_PROJECT, DELETE_PROJECT, GET_PROJECT_USERS, GET_PROJECT_USER} from '../services/types';
 
 const initialState = {
     projects: [],
-    project: {}
+    project: {},
+    project_users: [],
+    project_user: {},
 };
 
 export default function (state = initialState, action) {
@@ -25,6 +27,17 @@ export default function (state = initialState, action) {
                 projects: state.projects.filter(
                     project => project.projectIdentifier !== action.payload
                 )
+            };
+        case GET_PROJECT_USERS:
+            return {
+                ...state,
+                project_users: action.payload
+            };
+
+        case GET_PROJECT_USER:
+            return {
+                ...state,
+                project_user: action.payload
             };
 
         default:

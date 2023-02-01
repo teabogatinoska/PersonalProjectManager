@@ -1,11 +1,19 @@
-import { GET_BACKLOG, GET_PROJECT_TASK, DELETE_PROJECT_TASK } from "../services/types";
+import {
+    GET_BACKLOG,
+    GET_PROJECT_TASK,
+    DELETE_PROJECT_TASK,
+    GET_PROJECT_TASK_USER,
+    GET_PROJECT_TASK_USERS
+} from "../services/types";
 
-const initalState = {
+const initialState = {
     project_tasks: [],
-    project_task: {}
+    project_task: {},
+    project_task_user: {},
+    project_task_users: [],
 }
 
-export default function (state = initalState, action) {
+export default function (state = initialState, action) {
     switch (action.type) {
 
         case GET_BACKLOG:
@@ -24,6 +32,16 @@ export default function (state = initalState, action) {
             return {
                 ...state,
                 project_tasks: state.project_tasks.filter(project_task => project_task.projectSequence !== action.payload)
+            }
+        case GET_PROJECT_TASK_USER:
+            return {
+                ...state,
+                project_task_user: action.payload
+            }
+        case GET_PROJECT_TASK_USERS:
+            return {
+                ...state,
+                project_task_users: action.payload
             }
 
         default:

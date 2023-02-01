@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {GET_ERRORS, GET_BACKLOG, GET_PROJECT_TASK, DELETE_PROJECT_TASK} from './types';
+import {GET_ERRORS, GET_BACKLOG, GET_PROJECT_TASK, DELETE_PROJECT_TASK, GET_PROJECT_TASK_USER} from './types';
 
 
-export const addProjectTask = (backlog_id, project_task, history) => async dispatch => {
+export const addProjectTask = (backlog_id, project_task,  history) => async dispatch => {
 
     try {
         await axios.post(`/api/backlog/${backlog_id}`, project_task);
@@ -34,11 +34,25 @@ export const getBacklog = backlog_id => async dispatch => {
     }
 };
 
-export const getProjectTask = (backlog_id, task_id, history) => async dispatch => {
+export const getProjectTask = (backlog_id, task_id,  history) => async dispatch => {
     try {
         const res = await axios.get(`/api/backlog/${backlog_id}/${task_id}`);
         dispatch({
             type: GET_PROJECT_TASK,
+            payload: res.data
+        })
+    } catch (err) {
+        history.push("/dashboard");
+    }
+
+};
+
+export const getProjectTaskUser = (backlog_id, task_id,  history) => async dispatch => {
+    try {
+        const res = await axios.get(`/api/backlog/user/${backlog_id}/${task_id}`);
+        console.log("RES:", res.data);
+        dispatch({
+            type: GET_PROJECT_TASK_USER,
             payload: res.data
         })
     } catch (err) {

@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { logout } from '../../services/SecurityService';
+import '../../App.css';
+import {connect} from 'react-redux';
+import {logout} from '../../services/SecurityService';
+import logo from '../../img/logo.jpg';
+
 
 class Header extends Component {
 
@@ -14,14 +17,14 @@ class Header extends Component {
 
     render() {
 
-        const { validToken, user } = this.props.security;
+        const {validToken, user} = this.props.security;
 
         const userIsAuthenticated = (
             <div className="collapse navbar-collapse" id="mobile-nav">
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item">
                         <Link className="nav-link" to="/dashboard">
-                            Dashboard
+                            My Projects
                         </Link>
                     </li>
                 </ul>
@@ -29,7 +32,7 @@ class Header extends Component {
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item">
                         <Link className="nav-link" to="/dashboard">
-                            <i className="fas fa-user-circle mr-1" /> {user.firstName}
+                            <i className="fas fa-user-circle mr-1"/> {user.firstName}
                         </Link>
                     </li>
                     <li className="nav-item">
@@ -68,13 +71,17 @@ class Header extends Component {
         }
 
         return (
-            <nav className="navbar navbar-expand-sm navbar-dark bg-primary mb-4">
+            <nav className="navbar navbar-expand-sm navbar-dark mb-4">
                 <div className="container">
-                    <Link className="navbar-brand" to="/">
-                        Personal Project Management Tool
+                    <Link className="logo-img" to="/">
+                        <img src={logo} alt="landing"/>
                     </Link>
+                    <Link className="navbar-brand" to="/">
+                        <h4>ProjectHub</h4>
+                    </Link>
+
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#mobile-nav">
-                        <span className="navbar-toggler-icon" />
+                        <span className="navbar-toggler-icon"/>
                     </button>
                     {headerLinks}
                 </div>
@@ -92,4 +99,4 @@ const mapStateToProps = state => ({
     security: state.security
 })
 
-export default connect(mapStateToProps, { logout })(Header);
+export default connect(mapStateToProps, {logout})(Header);
