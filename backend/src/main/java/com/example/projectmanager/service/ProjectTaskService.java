@@ -21,5 +21,5 @@ public interface ProjectTaskService {
 
     void deleteTaskByProjectSequence(String backlog_id, String task_id, String username);
 
-    User findProjectTaskUser(String backlog_id, String task_id, String username);
+    /*User findProjectTaskUser(String backlog_id, String task_id, String username);*/
 }

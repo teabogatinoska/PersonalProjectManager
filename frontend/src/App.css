@@ -154,7 +154,7 @@ img {
 }
 
 .submitBtn {
-    margin-left: 190px;
+    margin-left: 220px;
 }
 
 footer {
@@ -170,7 +170,7 @@ footer {
 }
 
 .forms {
-    height: 80px;
+    height: 50px;
     background-color: #142d4c !important;
 
 }
@@ -181,6 +181,7 @@ footer {
 
 .card-body {
     background-color: #f1f9f9;
+
 }
 
 .forms > h1 {
@@ -189,6 +190,7 @@ footer {
 
 .forms > .text-center {
     color: #f1f9f9;
+
 }
 
 .userLogin, .text-center, .nav-link, .text {
@@ -199,6 +201,7 @@ footer {
 label {
     font-family: Motiva Sans Bold, sans-serif;
     color: #142d4c;
+    font-size: 14px;
 }
 
 .nav-link {
@@ -258,14 +261,17 @@ label {
 
 .card-text, .card-title {
     font-family: Motiva Sans Bold, sans-serif;
+    width: 100%;
 }
 
 .projectCard {
-    width: 19rem;
+    width: 21rem;
+    height: 20rem;
 }
 
 .projectBody {
     background-color: #142d4c;
+    height: 450px !important;
 }
 
 .projectTitle, .projectText {
@@ -280,3 +286,19 @@ label {
 .shadow-lg {
     background-color: #142d4c !important;
 }
+
+.formErrors {
+    background-color: #e3f6f5;
+    color: darkred;
+}
+
+.taskCard {
+    height: 230px;
+}
+
+.card-link {
+    margin-bottom: -60px;
+}
+
+
+

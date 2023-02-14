@@ -11,11 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.MultiValueMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -63,12 +59,12 @@ public class BacklogController {
         return new ResponseEntity<ProjectTask>(projectTask, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{backlog_id}/{task_id}")
+  /*  @GetMapping("/user/{backlog_id}/{task_id}")
     public ResponseEntity<?> getProjectTaskUser(@PathVariable String backlog_id, @PathVariable String task_id, Principal principal) {
         User user = this.projectTaskService.findProjectTaskUser(backlog_id, task_id, principal.getName());
         System.out.println("USER: " + user.getUsername());
         return new ResponseEntity<User>(user, HttpStatus.OK);
-    }
+    }*/
 
     @DeleteMapping("/{backlog_id}/{task_id}")
     public ResponseEntity<?> deleteProjectTask(@PathVariable String backlog_id, @PathVariable String task_id, Principal principal) {

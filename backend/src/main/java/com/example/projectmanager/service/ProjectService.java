@@ -6,6 +6,7 @@ import com.example.projectmanager.model.dto.ProjectDto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ProjectService {
 
@@ -18,7 +19,7 @@ public interface ProjectService {
 
     List<Project> findAllProjects(String username);
 
-    List<User> getProjectUsers (Long projectId);
+    Set<User> getProjectUsers (Long projectId);
 
     void deleteProjectByIdentifier(String projectId, String username);
 

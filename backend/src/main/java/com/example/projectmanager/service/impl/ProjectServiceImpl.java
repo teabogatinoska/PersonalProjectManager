@@ -1,7 +1,5 @@
 package com.example.projectmanager.service.impl;
 
-import com.example.projectmanager.exceptions.InvalidProjectStartDateException;
-import com.example.projectmanager.exceptions.ProjectIdAlreadyExistsException;
 import com.example.projectmanager.exceptions.ProjectIdNotFoundException;
 import com.example.projectmanager.exceptions.ProjectNotFoundException;
 import com.example.projectmanager.model.Backlog;
@@ -15,7 +13,6 @@ import com.example.projectmanager.service.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -37,10 +34,10 @@ public class ProjectServiceImpl implements ProjectService {
     public Optional<Project> save(ProjectDto projectDto, String leader) {
         Project project = new Project();
         Backlog backlog = new Backlog();
-        List<User> projectUsers = new ArrayList<>();
+        Set<User> projectUsers = new HashSet<>();
         User leaderUser = this.userRepository.findByUsername(leader);
 
-        for(String username: projectDto.getProjectUsers()){
+        for (String username : projectDto.getProjectUsers()) {
             projectUsers.add(this.userRepository.findByUsername(username));
         }
         Date currentDate = new java.util.Date();
@@ -66,18 +63,22 @@ public class ProjectServiceImpl implements ProjectService {
     public Optional<Project> edit(ProjectDto projectDto, String leader) {
         Project existingProject;
 
-        if(projectDto.getId() != null) {
-             existingProject = this.projectRepository.findByProjectIdentifier(projectDto.getProjectIdentifier());
-        } else throw new ProjectNotFoundException("Project with ID:'" + projectDto.getProjectIdentifier() + "' cannot be updated because it does not exist!");
+        if (projectDto.getId() != null) {
+            existingProject = this.projectRepository.findByProjectIdentifier(projectDto.getProjectIdentifier());
+        } else
+            throw new ProjectNotFoundException("Project with ID:'" + projectDto.getProjectIdentifier() + "' cannot be updated because it does not exist!");
 
         User leaderUser = this.userRepository.findByUsername(leader);
         Backlog backlog = this.backlogRepository.findByProjectIdentifier(projectDto.getProjectIdentifier().toUpperCase());
-        List<User> userList = new ArrayList<>();
+        Set<User> userList = new HashSet<>();
 
-        for(String username : projectDto.getProjectUsers()){
+
+        for (String username : projectDto.getProjectUsers()) {
             userList.add(this.userRepository.findByUsername(username));
         }
-
+        if (!userList.contains(leaderUser)) {
+            userList.add(leaderUser);
+        }
         existingProject.setProjectLeader(leaderUser.getUsername());
         existingProject.setProjectIdentifier(projectDto.getProjectIdentifier().toUpperCase());
         existingProject.setProjectUsers(userList);
@@ -114,18 +115,25 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> findAllProjects(String username) {
         User user = this.userRepository.findByUsername(username);
+
         return this.projectRepository.findAllByProjectUsers(user);
     }
 
-    @Override
-    public List<User> getProjectUsers(Long projectId) {
+    @Override//change
+    public Set<User> getProjectUsers(Long projectId) {
         Project project = this.projectRepository.getById(projectId);
         return project.getProjectUsers();
     }
 
     @Override
     public void deleteProjectByIdentifier(String projectId, String username) {
-        this.projectRepository.delete(findProjectByIdentifier(projectId, username));
+        Project project = findProjectByIdentifier(projectId, username);
+        Set<User> userList = project.getProjectUsers();
+
+        for (User  u : userList) {
+            u.getProjects().remove(project);
+        }
+        this.projectRepository.delete(project);
 
     }
 }

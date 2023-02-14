@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, {Component} from 'react'
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import '../../App.css';
 import landingLogo from '../../img/img2.png';
@@ -40,7 +40,6 @@ class Landing extends Component {
                     </div>
                 </div>
             </div>
-
 
 
         )

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -48,7 +47,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/updateProject/{projectId}")
-    public ResponseEntity<Project> updateProject(@Valid @RequestBody ProjectDto projectDto,  @PathVariable String projectId) {
+    public ResponseEntity<Project> updateProject(@Valid @RequestBody ProjectDto projectDto, @PathVariable String projectId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User authUser = (User) authentication.getPrincipal();
@@ -85,8 +84,7 @@ public class ProjectController {
 
     @GetMapping("/projectUsers/{project_id}")
     public Iterable<?> getProjectUsers(@PathVariable Long project_id) {
-        List<User> userList = this.projectService.getProjectUsers(project_id);
-        return userList;
+        return this.projectService.getProjectUsers(project_id);
     }
 
 }

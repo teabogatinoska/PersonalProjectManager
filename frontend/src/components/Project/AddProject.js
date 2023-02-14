@@ -20,6 +20,7 @@ class AddProject extends Component {
             projectUsers: [],
             projectLeader: "",
             errors: {}
+
         }
 
 
@@ -33,7 +34,7 @@ class AddProject extends Component {
         this.props.getUsers();
     }
 
-    //life cycle hooks
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.errors) {
             this.setState({errors: nextProps.errors});
@@ -41,9 +42,36 @@ class AddProject extends Component {
     }
 
     onChange(e) {
+        const name = e.target.name;
+        const value = e.target.value;
+
+        let nameValid = this.state.projectName;
+        let idValid = this.state.projectIdentifier;
+        let descriptionValid = this.state.description;
+
+
+        switch (name) {
+            case 'projectName':
+                nameValid = value.length > 0;
+                this.state.errors.projectName = nameValid ? '' : "Project Name can not be empty!";
+                break;
+            case 'projectIdentifier':
+                idValid = value.length > 3;
+                this.state.errors.projectIdentifier = idValid ? '' : "Project ID must be at least 4 characters!";
+                break;
+            case 'description':
+                descriptionValid = value.length > 0;
+                this.state.errors.description = descriptionValid ? '' : "Project Description can not be empty!";
+                break;
+            default:
+                break;
+        }
+
+
         this.setState(
-            {[e.target.name]: e.target.value.trim()}
+            {[e.target.name]: e.target.value}
         )
+
     }
 
     handleChange = (e) => {
@@ -66,6 +94,7 @@ class AddProject extends Component {
             projectLeader: this.state.projectLeader
         }
 
+
         this.props.createProject(newProject, this.props.history)
     }
 
@@ -81,14 +110,15 @@ class AddProject extends Component {
                             <div className="col-md-8 m-auto">
                                 <div className="card shadow">
                                     <div className="card-header rounded forms">
-                                        <h1 className="display-5 text-center">Create New Project </h1>
+                                        <h4 className="display-5 text-center">Create New Project </h4>
                                     </div>
+
                                     <div className="card-body">
                                         <form onSubmit={this.onSubmit}>
-                                            <label>Project Name</label>
-                                            <div className="form-group">
-                                                <input type="text"
-                                                       className={classnames("form-control form-control-lg", {
+                                            <label>Project Name:</label>
+                                            <div className="form-group ">
+                                                <input type="text" required
+                                                       className={classnames("form-control", {
                                                            "is-invalid": errors.projectName
                                                        })} name="projectName"
                                                        value={this.state.projectName}
@@ -99,9 +129,9 @@ class AddProject extends Component {
                                             </div>
 
                                             <div className="form-group">
-                                                <label>Project ID</label>
-                                                <input type="text"
-                                                       className={classnames("form-control form-control-lg", {
+                                                <label>Project ID:</label>
+                                                <input type="text" required
+                                                       className={classnames("form-control", {
                                                            "is-invalid": errors.projectIdentifier
                                                        })} name="projectIdentifier"
                                                        value={this.state.projectIdentifier} onChange={this.onChange}/>
@@ -111,26 +141,35 @@ class AddProject extends Component {
                                             </div>
 
                                             <div className="form-group">
-                                                <label>Project Description</label>
-                                                <textarea className={classnames("form-control form-control-lg", {
-                                                    "is-invalid": errors.description
-                                                })} name="description"
+                                                <label>Project Description:</label>
+                                                <textarea required
+                                                          className={classnames("form-control", {
+                                                              "is-invalid": errors.description
+                                                          })} name="description"
                                                           value={this.state.description} onChange={this.onChange}/>
                                                 {errors.description && (
                                                     <div className="invalid-feedback">{errors.description}</div>
                                                 )}
                                             </div>
-                                            <label>Estimated End Date</label>
+                                            <label>Estimated End Date:</label>
                                             <div className="form-group">
-                                                <input type="date" className="form-control form-control-lg"
+                                                <input type="date" required
+                                                       className={classnames("form-control", {
+                                                           "is-invalid": errors.end_date
+                                                       })}
                                                        name="end_date"
                                                        value={this.state.end_date} onChange={this.onChange}/>
+                                                {errors.end_date && (
+                                                    <div className="invalid-feedback">{errors.end_date}</div>
+                                                )}
                                             </div>
 
                                             <div className="form-group">
-                                                <label>Assign to:</label>
-                                                <select multiple={true} name="projectUsers" id="projectUsers" value={this.state.projectUsers}
-                                                        className="  form-control form-control-lg" onChange={this.handleChange}>
+                                                <label>Add Members:</label>
+                                                <select multiple={true} name="projectUsers" id="projectUsers"
+                                                        value={this.state.projectUsers}
+                                                        className="  form-control"
+                                                        onChange={this.handleChange}>
                                                     {users.map((term) =>
                                                         <option value={term.username}>{term.username}</option>
                                                     )}
@@ -138,7 +177,7 @@ class AddProject extends Component {
 
                                             </div>
 
-                                            <input type="submit" className=" btn btn-primary btn-block mt-4"/>
+                                            <input type="submit" className=" btn btn-primary btn-block mt-2"/>
 
                                         </form>
                                     </div>

@@ -5,6 +5,7 @@ import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,9 +53,10 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<ProjectTask> projectTasks = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "projectUsers")
-    @JsonIgnore
-    Set<Project> projects;
+    //    @ManyToMany(mappedBy = "projectUsers")
+//    @JsonIgnore
+    @ManyToMany
+    List<Project> projects = new ArrayList<>();
 
     public User() {
     }
@@ -68,7 +70,6 @@ public class User implements UserDetails {
     protected void onUpdate() {
         this.updated_At = new Date();
     }
-
 
     /* User Details Interface methods */
 

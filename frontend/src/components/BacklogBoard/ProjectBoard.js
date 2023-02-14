@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom';
+import React, {Component} from 'react'
+import {Link} from 'react-router-dom';
 import Backlog from './Backlog';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import { getBacklog } from '../../services/backlogService';
+import {getBacklog} from '../../services/backlogService';
 
 class ProjectBoard extends Component {
 
@@ -15,20 +15,22 @@ class ProjectBoard extends Component {
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params;
+        const {id} = this.props.match.params;
         this.props.getBacklog(id);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.errors) {
-            this.setState({ errors: nextProps.errors });
+            this.setState({errors: nextProps.errors});
         }
     }
 
     render() {
-        const { id } = this.props.match.params;
-        const { project_tasks } = this.props.backlog;
-        const { errors } = this.state;
+
+        const {id} = this.props.match.params;
+        const {project_tasks} = this.props.backlog;
+        const {errors} = this.state;
+
 
         let BoardContent;
 
@@ -54,24 +56,23 @@ class ProjectBoard extends Component {
                     );
                 }
             } else {
-                return <Backlog project_tasks_prop={project_tasks} />;
+                return <Backlog project_tasks_prop={project_tasks}/>;
             }
         };
 
         BoardContent = boardTasks(errors, project_tasks);
 
 
-
         return (
             <div className="backlog">
-            <div className="container">
-                <Link to={`/addProjectTask/${id}`} className="btn rounded btn-primary mb-3">
-                    <i className="fas fa-plus-circle"> Create Project Task</i>
-                </Link>
-                <br />
-                <hr />
-                {BoardContent}
-            </div>
+                <div className="container">
+                    <Link to={`/addProjectTask/${id}`} className="btn rounded btn-primary mb-3">
+                        <i className="fas fa-plus-circle"> Create Project Task</i>
+                    </Link>
+                    <br/>
+                    <hr/>
+                    {BoardContent}
+                </div>
             </div>
 
         )
@@ -90,4 +91,4 @@ const mapStateToProps = state => ({
 })
 
 
-export default connect(mapStateToProps, { getBacklog })(ProjectBoard);
+export default connect(mapStateToProps, {getBacklog})(ProjectBoard);

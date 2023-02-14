@@ -27,36 +27,36 @@ class Backlog extends Component {
         }
 
         return (
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="card shadow p-2 mb-3 rounded text-center">
-                                <div className="card-header rounded text-white toDo">
-                                    <h3>To Do</h3>
-                                </div>
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-4">
+                        <div className="card shadow p-2 mb-3 rounded text-center">
+                            <div className="card-header rounded text-white toDo">
+                                <h3>To Do</h3>
                             </div>
+                        </div>
 
-                            {todoItems}
+                        {todoItems}
 
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card shadow p-2 mb-3 rounded text-center">
-                                <div className="card-header rounded text-white inProgress">
-                                    <h3>In Progress</h3>
-                                </div>
+                    </div>
+                    <div className="col-md-4">
+                        <div className="card shadow p-2 mb-3 rounded text-center">
+                            <div className="card-header rounded text-white inProgress">
+                                <h3>In Progress</h3>
                             </div>
-                            {inProgressItems}
                         </div>
-                        <div className="col-md-4">
-                            <div className="card shadow p-2 mb-3 rounded text-center">
-                                <div className="card-header rounded bg-success text-white done">
-                                    <h3>Done</h3>
-                                </div>
+                        {inProgressItems}
+                    </div>
+                    <div className="col-md-4">
+                        <div className="card shadow p-2 mb-3 rounded text-center">
+                            <div className="card-header rounded bg-success text-white done">
+                                <h3>Done</h3>
                             </div>
-                            {doneItems}
                         </div>
+                        {doneItems}
                     </div>
                 </div>
+            </div>
 
         )
     }

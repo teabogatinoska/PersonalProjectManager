@@ -101,14 +101,14 @@ class UpdateProject extends Component {
                     <div className="row">
                         <div className="col-md-8 m-auto">
                             <div className="card shadow">
-                                <div className="card-header rounded forms">
-                                    <h1 className="display-5 text-center">Update Project Details </h1>
+                                <div className="card-header rounded forms ">
+                                    <h4 className=" text-center">Update Project Details </h4>
                                 </div>
                                 <div className="card-body">
                                     <form onSubmit={this.onSubmit}>
                                         <div className="form-group">
-                                            <label>Project Name</label>
-                                            <input type="text" className={classnames("form-control form-control-lg", {
+                                            <label>Project Name:</label>
+                                            <input type="text" className={classnames("form-control", {
                                                 "is-invalid": errors.projectName
                                             })} name="projectName" value={this.state.projectName}
                                                    onChange={this.onChange}/>
@@ -119,15 +119,15 @@ class UpdateProject extends Component {
                                             }
                                         </div>
                                         <div className="form-group">
-                                            <label>Project ID</label>
-                                            <input type="text" className="form-control form-control-lg"
+                                            <label>Project ID:</label>
+                                            <input type="text" className="form-control "
                                                    name="projectIdentifier"
                                                    value={this.state.projectIdentifier} onChange={this.onChange}
                                                    disabled/>
                                         </div>
                                         <div className="form-group">
-                                            <label>Project Description</label>
-                                            <textarea className={classnames("form-control form-control-lg", {
+                                            <label>Project Description:</label>
+                                            <textarea className={classnames("form-control", {
                                                 "is-invalid": errors.description
                                             })} name="description"
                                                       value={this.state.description} onChange={this.onChange}/>
@@ -135,9 +135,9 @@ class UpdateProject extends Component {
                                                 <div className="invalid-feedback">{errors.description}</div>
                                             )}
                                         </div>
-                                        <label>Estimated End Date</label>
+                                        <label>Estimated End Date:</label>
                                         <div className="form-group">
-                                            <input type="date" className="form-control form-control-lg" name="dueDate"
+                                            <input type="date" className="form-control " name="dueDate"
                                                    value={this.state.end_date}
                                                    onChange={this.onChange}/>
 
@@ -147,7 +147,7 @@ class UpdateProject extends Component {
                                             <label>Add Members:</label>
                                             <select multiple={true} name="projectUsers" id="projectUsers"
                                                     value={this.state.projectUsers}
-                                                    className="  form-control form-control-lg"
+                                                    className="  form-control "
                                                     onChange={this.handleChange}>
                                                 {users.map((term) =>
                                                     <option value={term.username}>{term.username}</option>
@@ -156,7 +156,7 @@ class UpdateProject extends Component {
 
                                         </div>
 
-                                        <input type="submit" className="btn btn-primary btn-block mt-4"/>
+                                        <input type="submit" className="btn btn-primary btn-block mt-2"/>
                                     </form>
                                 </div>
                             </div>

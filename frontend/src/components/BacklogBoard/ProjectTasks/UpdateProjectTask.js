@@ -69,7 +69,7 @@ class UpdateProjectTask extends Component {
     }
 
     onChange(e) {
-        this.setState({[e.target.name]: e.target.value.trim()})
+        this.setState({[e.target.name]: e.target.value})
     }
 
     onSubmit(e) {
@@ -89,7 +89,7 @@ class UpdateProjectTask extends Component {
             updated_At: this.state.updated_At
         }
 
-        console.log("PROJECT TASK: ", JSON.stringify(UpdateProjectTask));
+
 
         this.props.updateProjectTask(this.state.projectIdentifier, this.state.projectSequence, UpdateProjectTask, this.props.history);
 
@@ -109,16 +109,15 @@ class UpdateProjectTask extends Component {
                         <div className="col-md-8 m-auto">
                             <div className="card shadow">
                                 <div className="card-header rounded forms">
-                                    <h5 className="text-center">Update Task Details </h5>
-                                    <p className=" updateText text-center">Task
-                                        ID:{""} {this.state.projectSequence} {""}</p>
+                                    <h5 className="text-center">Update Task Details -- Task
+                                        ID:{""} {this.state.projectSequence} {""}</h5>
                                     <hr/>
                                 </div>
                                 <div className="card-body">
                                     <form onSubmit={this.onSubmit}>
                                         <div className="form-group">
-                                            <label>Task Name</label>
-                                            <input type="text" className={classnames("form-control form-control-lg", {
+                                            <label>Task Name:</label>
+                                            <input type="text" required className={classnames("form-control", {
                                                 "is-invalid": errors.summary
                                             })} name="summary"
                                                    value={this.state.summary} onChange={this.onChange}/>
@@ -129,22 +128,21 @@ class UpdateProjectTask extends Component {
                                             }
                                         </div>
                                         <div className="form-group">
-                                            <label>Task Description</label>
-                                            <textarea className={classnames("form-control form-control-lg", {
+                                            <label>Task Description:</label>
+                                            <textarea className={classnames("form-control", {
                                                 "is-invalid": errors.taskDescription
-                                            })} name="taskDescription"
+                                            })} name="taskDescription" required
                                                       value={this.state.taskDescription} onChange={this.onChange}/>
                                         </div>
-                                        <label>Due Date</label>
+                                        <label>Due Date:</label>
                                         <div className="form-group">
-                                            <label>Task Due Date can not be after Project End Date</label>
-                                            <input type="text" className="form-control form-control-lg" name="dueDate"
+                                            <input type="text" className="form-control" name="dueDate" required
                                                    value={this.state.dueDate}
                                                    onChange={this.onChange}/>
                                         </div>
                                         <div className="form-group">
-                                            <label>Task Priority</label>
-                                            <select className="form-control form-control-lg" name="priority"
+                                            <label>Task Priority:</label>
+                                            <select className="form-control" name="priority" required
                                                     value={this.state.priority} onChange={this.onChange}>
                                                 <option value={0}>Select Priority</option>
                                                 <option value={1}>High</option>
@@ -154,8 +152,8 @@ class UpdateProjectTask extends Component {
                                         </div>
 
                                         <div className="form-group">
-                                            <label>Task Status</label>
-                                            <select className="form-control form-control-lg" name="status"
+                                            <label>Task Status:</label>
+                                            <select className="form-control" name="status" required
                                                     value={this.state.status} onChange={this.onChange}>
                                                 <option value="">Select Status</option>
                                                 <option value="TO_DO">TO DO</option>
@@ -165,7 +163,7 @@ class UpdateProjectTask extends Component {
                                         </div>
                                         <div className="form-group">
                                             <label>Assign to:</label>
-                                            <select name="user" className="form-control form-control-lg"
+                                            <select name="user" className="form-control" required
                                                     onChange={this.onChange}>
                                                 <option value="">Select User</option>
                                                 {users.map((term) =>
@@ -173,9 +171,9 @@ class UpdateProjectTask extends Component {
                                                 )}
                                             </select>
                                         </div>
-                                        <input type="submit" className="btn btn-primary btn-lg submitBtn "/>
+                                        <input type="submit" className="btn btn-primary  submitBtn "/>
                                         <Link to={`/projectBoard/${this.state.projectIdentifier}`}
-                                              className="btn btn-info btn-lg backBtn">
+                                              className="btn btn-info  backBtn">
                                             Back to Project Board
                                         </Link>
                                     </form>

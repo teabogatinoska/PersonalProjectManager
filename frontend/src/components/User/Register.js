@@ -64,8 +64,8 @@ class Register extends Component {
                     <div className="row">
                         <div className="col-md-8 m-auto">
                             <div className="card shadow">
-                                <div className="card-header rounded forms">
-                                    <h1 className="text-center userLogin">Sign Up</h1><br/>
+                                <div className="card-header rounded forms ">
+                                    <h4 className="text-center userLogin ">Sign Up</h4><br/>
                                 </div>
                                 <div className="card-body">
                                     <label>First Name</label>
@@ -73,7 +73,7 @@ class Register extends Component {
                                         <div className="form-group">
                                             <input type="text" className={classnames("form-control", {
                                                 "is-invalid": errors.firstName
-                                            })}name="firstName"
+                                            })} name="firstName"
                                                    value={this.state.firstName} onChange={this.onChange}/>
                                             {
                                                 errors.firstName && (
@@ -124,7 +124,7 @@ class Register extends Component {
                                             <input type="password"
                                                    className={classnames("form-control", {
                                                        "is-invalid": errors.confirmPassword
-                                                   })}value={this.state.confirmPassword}
+                                                   })} value={this.state.confirmPassword}
                                                    onChange={this.onChange}
                                                    name="confirmPassword"/>
                                             {

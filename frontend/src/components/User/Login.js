@@ -60,7 +60,7 @@ class Login extends Component {
                         <div className="col-md-6 m-auto">
                             <div className="card shadow">
                                 <div className="card-header rounded forms ">
-                                    <h1 className=" text-center userLogin">Log In</h1><br/>
+                                    <h4 className=" text-center userLogin ">Log In</h4><br/>
                                 </div>
                                 <div className="card-body">
 

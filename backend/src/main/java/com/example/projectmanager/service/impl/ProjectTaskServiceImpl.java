@@ -10,7 +10,6 @@ import com.example.projectmanager.model.dto.ProjectTaskDto;
 import com.example.projectmanager.repository.ProjectTaskRepository;
 import com.example.projectmanager.repository.UserRepository;
 import com.example.projectmanager.service.ProjectTaskService;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -139,7 +138,7 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         this.projectTaskRepository.delete(projectTask);
     }
 
-    @Override
+/*    @Override
     public User findProjectTaskUser(String backlog_id, String task_id, String username) {
         this.projectService.findProjectByIdentifier(backlog_id, username);
         ProjectTask projectTask = this.projectTaskRepository.findByProjectSequence(task_id);
@@ -154,5 +153,5 @@ public class ProjectTaskServiceImpl implements ProjectTaskService {
         }
 
         return projectTask.getUser();
-    }
+    }*/
 }

@@ -10,17 +10,18 @@ class ProjectTask extends Component {
         this.props.deleteProjectTask(backlog_id, pt_id);
     }
 
-    getUser(backlog_id, pt_id) {
+    /*getUser(backlog_id, pt_id) {
 
         const {user} = this.props.getProjectTaskUser(backlog_id, pt_id, this.props.history);
         console.log("USER:", user);
         return user;
     }
-
+*/
     render() {
 
         const {project_task} = this.props;
-        this.getUser(project_task.projectIdentifier, project_task.projectSequence, this.props.history);
+        console.log("PROJECT TASK: ", this.props);
+        // this.getUser(project_task.projectIdentifier, project_task.projectSequence, this.props.history);
 
 
         let priorityString;
@@ -40,7 +41,7 @@ class ProjectTask extends Component {
             priorityString = "LOW"
         }
         return (
-            <div className="card shadow p-2 mb-4 bg-light">
+            <div className="card shadow p-2 mb-4 bg-light taskCard">
                 <div className={`card-header text-primary ${priorityClass}`}>
                     ID: {project_task.projectSequence} -> Priority: {priorityString}
                 </div>
@@ -50,9 +51,9 @@ class ProjectTask extends Component {
                     <p className="card-text text-truncate">
                         {project_task.taskDescription}
                     </p>
-                    <p className="card-text text-truncate">
-                        User:
-                    </p>
+                    {/* <p className="card-text text-truncate">*/}
+                    {/*    User:*/}
+                    {/*</p>*/}
                     <Link to={`/updateProjectTask/${project_task.projectIdentifier}/${project_task.projectSequence}`}
                           className=" card-link btn btn-primary">
                         View / Update Task
@@ -71,8 +72,8 @@ class ProjectTask extends Component {
 ProjectTask.propTypes = {
     deleteProjectTask: PropTypes.func.isRequired,
     getProjectTaskUser: PropTypes.func.isRequired,
-    project_task_user: PropTypes.object.isRequired
+    // project_task_user: PropTypes.object.isRequired
 
 }
 
-export default connect(null, {deleteProjectTask, getProjectTaskUser})(ProjectTask);
+export default connect(null, {deleteProjectTask})(ProjectTask);

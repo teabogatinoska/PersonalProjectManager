@@ -9,13 +9,12 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Project {
 
     @Id
@@ -53,16 +52,12 @@ public class Project {
     @JsonIgnore // It won't show this backlog (with all project tasks) object when search a project by id
     private Backlog backlog;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "project_users",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "users_id"))
-    @JsonIgnore
-    private List<User> projectUsers;
-
-   // private List<String> usernames;
-
+    private Set<User> projectUsers = new HashSet<User>();
 
     private String projectLeader;
 

@@ -23,7 +23,7 @@ public class Backlog {
 
     //OneToOne project
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="project_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false)
     @JsonIgnore
     private Project project;
 
@@ -31,7 +31,6 @@ public class Backlog {
     //OneToMany tasks
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "backlog", orphanRemoval = true)
     private List<ProjectTask> projectTasks = new ArrayList<>();
-
 
 
     public Backlog() {
